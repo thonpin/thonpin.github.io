@@ -15,6 +15,7 @@ The site prioritizes real software projects and describes experience, education,
 | --- | --- |
 | `index.html` | Semantic one-page portfolio, metadata, 9 selected projects, education, experience |
 | `assets/css/styles.css` | Responsive layouts, light/dark themes, typography and interactions |
+| `assets/css/noscript.css` | Unhides all project cards only when JavaScript is disabled |
 | `assets/js/app.js` | Theme persistence, navigation, category filters, 6-card pagination |
 | `tests/portfolio.test.mjs` | Node built-in regression tests: structure, accessibility contracts, interactions |
 | `.github/workflows/quality.yml` | GitHub Actions checks on pushes and pull requests |
@@ -60,7 +61,7 @@ The public source is maintained on `main`. **GitHub Pages publication and the la
 
 If the page displays stale files, reload without cache. The asset URLs in `index.html` are versioned for releases.
 
-The site includes a **CSP meta policy** and external-link protections. Meta CSP is not equivalent to enforcing HTTP headers; directives such as `frame-ancestors` must be configured at the hosting layer. Review browser console output after deployment.
+The site includes a **CSP meta policy without `unsafe-inline` for styles**, a dedicated no-JavaScript stylesheet, and external-link protections. Meta CSP is not equivalent to enforcing HTTP headers; directives such as `frame-ancestors` must be configured at the hosting layer. Review browser console output after deployment.
 
 The footer summary remains **10px by explicit design preference**. This is a readability exception to the site's broader accessibility typography targets.
 
