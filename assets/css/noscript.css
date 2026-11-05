@@ -3,6 +3,7 @@
   display: block !important;
 }
 .filter-row,
-.project-pagination {
+.project-pagination,
+.project-expand-actions {
   display: none !important;
 }
