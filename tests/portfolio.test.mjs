@@ -5,6 +5,7 @@ import {runInNewContext} from 'node:vm';
 
 const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
 const css=readFileSync(new URL('../assets/css/styles.css',import.meta.url),'utf8');
+const mobileCss=readFileSync(new URL('../assets/css/mobile-ux.css',import.meta.url),'utf8');
 const noscriptCss=readFileSync(new URL('../assets/css/noscript.css',import.meta.url),'utf8');
 const script=readFileSync(new URL('../assets/js/app.js',import.meta.url),'utf8');
 
@@ -40,6 +41,12 @@ test('approved portfolio content and accessibility fallbacks remain present',()=
   assert.ok(!html.includes('Curriculum overview'),'removed external course links must not reappear');
   for(const tech of ['Python','Java','React','PHP','MariaDB'])assert.ok(html.includes("'"+tech+"'"),tech+' is missing from code editor');
   assert.match(html,/<div class="projects-grid"[^>]*tabindex="-1"/);
+  assert.match(html,/id="projects-toggle"[^>]*aria-expanded="false"/);
+  assert.match(html,/class="mobile-actions" aria-label="ทางลัดหลักบนมือถือ"/);
+  assert.match(html,/<details class="explore-disclosure"><summary>/);
+  const featured=all(/<article( hidden)? class="project-card/g);
+  assert.equal(featured.filter(x=>!x[1]).length,3,'initially show only three featured cards');
+  assert.ok(html.indexOf('id="work"')<html.indexOf('id="about"'),'work precedes biography');
   assert.match(html,/id="projects-status"[^>]*role="status"[^>]*aria-live="polite"/);
   assert.match(html,/<noscript><link rel="stylesheet" href="assets\/css\/noscript\.css\?v=[^"]+"><\/noscript>/);
   assert.match(noscriptCss,/\.projects-grid \.project-card\[hidden\]\s*\{\s*display:\s*block\s*!important/);
@@ -52,6 +59,10 @@ test('CSS supports light contrast, scrolled code and the requested footer size',
   assert.match(css,/\.code-line\{[^}]*width:max-content/);
   assert.match(css,/\.site-footer \.footer-note,\s*\.site-footer \.footer-note a\{font-size:10px/);
   assert.match(css,/#projects-grid:focus-visible/);
+  assert.match(mobileCss,/container:project-gallery/);
+  assert.match(mobileCss,/@container project-gallery/);
+  assert.match(mobileCss,/\.mobile-actions\{display:grid/);
+  assert.match(noscriptCss,/\.project-expand-actions/);
   assert.ok(!css.includes('.experience-compact{max-width:880px}'));
   // CSS structure smoke check, including nested media query braces.
   let depth=0,comment=false,quote=null;
@@ -97,13 +108,16 @@ function createHarness(){
   const navLinks=[...navIds.matchAll(/href="(#[^"]+)"/g)].map(x=>{
     const node=makeElement();node.attrs.href=x[1];return node;
   });
-  for(const name of ['theme-toggle','menu-toggle','primary-nav','projects-grid','project-pagination','project-prev','project-next','project-page-status','project-page-count','projects-status','year',...navLinks.map(x=>x.attrs.href.slice(1))])ids[name]=makeElement(name);
+  for(const name of ['theme-toggle','menu-toggle','primary-nav','projects-grid','projects-toggle','projects-toggle-label','project-empty','project-page-status','projects-status','year',...navLinks.map(x=>x.attrs.href.slice(1))])ids[name]=makeElement(name);
   ids['primary-nav'].querySelectorAll=()=>navLinks;
   ids['primary-nav'].contains=node=>navLinks.includes(node);
   const categories=all(/<article\b[^>]*class="project-card[^"]*"[^>]*data-category="([^"]+)"/g).map(x=>x[1]);
+  const cardLinks=[];
   const cards=categories.map(category=>{
-    const node=makeElement();
+    const node=makeElement(),anchor=makeElement();
     node.dataset.category=category;
+    node.querySelector=()=>anchor;
+    cardLinks.push(anchor);
     return node;
   });
   const filters=['all','enterprise','education','security'].map(category=>{
@@ -136,7 +150,7 @@ function createHarness(){
   };
   runInNewContext(script,{document,window,localStorage});
   const visible=()=>cards.map((card,index)=>card.hidden?null:index+1).filter(Boolean);
-  return {ids,cards,filters,events,navLinks,meta,visible,
+  return {ids,cards,cardLinks,filters,events,navLinks,meta,visible,
     get focus(){return activeElement},
     get focusCount(){return focused},
     get scrollCount(){return scrolled},
@@ -144,23 +158,30 @@ function createHarness(){
   };
 }
 
-test('gallery filters and pagination operate on all nine cards',()=>{
+test('featured projects expand and filter across all nine cards',()=>{
   const app=createHarness();
-  assert.deepEqual(app.visible(),[1,2,3,4,5,6]);
-  app.ids['project-next'].click();
-  assert.deepEqual(app.visible(),[7,8,9]);
-  assert.equal(app.focus,app.ids['projects-grid'],'focus should move to updated project list');
-  assert.ok(app.scrollCount>=1);
-  app.ids['project-prev'].click();
-  assert.deepEqual(app.visible(),[1,2,3,4,5,6]);
+  assert.deepEqual(app.visible(),[1,2,3]);
+  assert.equal(app.ids['projects-toggle'].attrs['aria-expanded'],'false');
+  app.ids['projects-toggle'].click();
+  assert.deepEqual(app.visible(),[1,2,3,4,5,6,7,8,9]);
+  assert.equal(app.ids['projects-toggle'].attrs['aria-expanded'],'true');
+  assert.equal(app.focus,app.cardLinks[3],'expanded list should focus first newly visible project');
+  app.ids['projects-toggle'].click();
+  assert.deepEqual(app.visible(),[1,2,3]);
+  assert.equal(app.focus,app.ids['projects-toggle']);
   app.filters[1].click();
+  assert.deepEqual(app.visible(),[1,3,4]);
+  app.ids['projects-toggle'].click();
   assert.deepEqual(app.visible(),[1,3,4,5,7]);
   app.filters[2].click();
   assert.deepEqual(app.visible(),[2,6,8]);
+  assert.equal(app.ids['projects-toggle'].hidden,true);
   app.filters[3].click();
   assert.deepEqual(app.visible(),[9]);
+  assert.equal(app.ids['projects-toggle'].hidden,true);
   app.filters[0].click();
-  assert.deepEqual(app.visible(),[1,2,3,4,5,6]);
+  assert.deepEqual(app.visible(),[1,2,3]);
+  assert.equal(app.ids['projects-toggle'].hidden,false);
   assert.match(app.ids['projects-status'].textContent,/9 ผลงาน/);
 });
 
