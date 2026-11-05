@@ -55,3 +55,19 @@
  .quick-link{min-height:60px}
 }
 @media(prefers-reduced-motion:reduce){.project-toggle,.mobile-actions a,.explore-disclosure summary span{transition:none}}
+
+/* Expanded-state feedback and accessible empty result */
+.project-toggle-icon{display:inline-block;transition:transform 160ms ease}
+.project-toggle[aria-expanded="true"] .project-toggle-icon{transform:rotate(180deg)}
+.project-empty{padding:20px;border:1px dashed var(--line);border-radius:var(--ux-radius);color:var(--muted);font-size:14px;text-align:center}
+.project-toggle,.filter,.mobile-actions a{transition:background-color 160ms ease,border-color 160ms ease,color 160ms ease}
+@media(max-width:560px){
+ .project-art::after{opacity:.6}
+ .work-section .section-heading{margin-bottom:18px}
+ .work-section .filter-row{margin-bottom:14px}
+ .project-expand-actions{margin-top:14px}
+ .work-note{margin-top:20px}
+}
+@media(prefers-reduced-motion:reduce){
+ .project-toggle-icon,.project-toggle,.filter,.mobile-actions a{transition:none!important}
+}
