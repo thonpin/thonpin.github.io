@@ -1,24 +1,46 @@
-# Landing Page Publication Acceptance — 2026-11-05
+# Portfolio release and UI/UX acceptance checklist
 
-## Verified from supplied portfolio snapshot and local source
-- [x] Repository: thonpin/thonpin.github.io
-- [x] Original portfolio profile English name field: Thongn Noppakoon (matching landing page)
-- [x] Displayed role and affiliations match source portfolio content
-- [x] Portfolio categories, project descriptions and counts checked against source snapshot
-- [x] Original-site deep links map to 10 URLs and the PHP application's expected query modes and anchors
-- [x] No databases, PHP backend, passwords, MFA secrets or access logs in this public repository
-- [x] Responsive, theme, filter and mobile-navigation checks passed locally
-- [x] Canonical and Open Graph URL: https://thonpin.github.io/
-- [x] Public robots policy updated to index,follow
-- [x] Public robots.txt and sitemap.xml added
-- [x] User explicitly approved merging to main and publishing
+Repository: `thonpin/thonpin.github.io` · Branch: `main` · Updated: 2026-11-05
 
-## Remaining operational checks
-- [ ] Confirm that GitHub Pages is configured for main / (root) after merge
-- [ ] Confirm https://thonpin.github.io/ loads the new content
-- [ ] Verify original-site deep links from a network that can reach dini.srru.ac.th (not possible from the test environment)
+## Source and content
 
-## Evidence and limitations
-The SQL portfolio profile `name_eng` stores `Thongn Noppakoon`. Repository profile README elsewhere used a different spelling, so the live landing preserves the value in the supplied portfolio database rather than guessing a correction. Live legacy-site availability could not be independently tested, but routes and anchors were verified in the user's supplied PHP snapshot. No claim of end-to-end live validation is made.
+- [x] Source, CSS and JavaScript reviewed against current `main`.
+- [x] Exactly nine project cards, three categories and six-card pagination.
+- [x] Exactly two experience records; current role details remain collapsible.
+- [x] Exactly two education records; Ph.D. remains in progress.
+- [x] Both Curriculum overview links remain removed.
+- [x] No duplicate IDs, broken fragment targets or missing ARIA references.
+- [x] External `target=_blank` links use `noopener` attributes.
 
-See TEST_REPORT.md for original frontend test notes.
+## Quality improvements
+
+- [x] Light-mode secondary text contrast strengthened.
+- [x] Legibility improved across project cards and education labels.
+- [x] Decorative Code Editor has horizontal overflow, not hidden text clipping.
+- [x] Mobile navigation Escape and keyboard focus behavior improved.
+- [x] Project pagination moves keyboard focus to updated results.
+- [x] Duplicate screen reader live announcement removed.
+- [x] No-script view shows all cards with appropriate messaging.
+- [x] Unused CSS rules and redundant media query removed.
+- [x] Footer retained at explicitly requested 10px; implemented in CSS.
+- [x] CSP meta policy added, with documented hosting-level limitations.
+
+## Automated verification
+
+- [x] Regression suite committed as `tests/portfolio.test.mjs`.
+- [x] npm scripts committed.
+- [x] GitHub Actions quality workflow committed.
+- [x] All five tests replayed successfully against the current code in a V8 test harness.
+- [ ] Validate native Node runner and GitHub Actions status on the actual repository.
+
+## Production checks still required
+
+- [ ] Confirm new GitHub Pages deployment completes successfully.
+- [ ] Check mobile layouts at 320/360/390px and tablet/desktop at 768/1024/1440px.
+- [ ] Check 200% zoom and screen reader announcements, keyboard tab order and focus visibility.
+- [ ] Run axe-core / Lighthouse and fix any remaining issues.
+- [ ] Check CSP console and HTTP security response headers.
+- [ ] Verify external service and research portfolio URLs.
+- [ ] Inspect repository history for accidental sensitive content before broad distribution.
+
+**Note:** This checklist supersedes the previous pre-publication review state. Headless-browser results from earlier commits are not a validation of the latest commit.
