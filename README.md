@@ -14,9 +14,10 @@ The site prioritizes real software projects and describes experience, education,
 | Path | Purpose |
 | --- | --- |
 | `index.html` | Semantic one-page portfolio, metadata, 9 selected projects, education, experience |
-| `assets/css/styles.css` | Responsive layouts, light/dark themes, typography and interactions |
+| `assets/css/styles.css` | Base responsive layout, light/dark themes and typography |
+| `assets/css/mobile-ux.css` | Conversion-focused mobile components, design tokens and container queries |
 | `assets/css/noscript.css` | Unhides all project cards only when JavaScript is disabled |
-| `assets/js/app.js` | Theme persistence, navigation, category filters, 6-card pagination |
+| `assets/js/app.js` | Theme, menu, three-project preview, category filters, disclosure and local conversion events |
 | `tests/portfolio.test.mjs` | Node built-in regression tests: structure, accessibility contracts, interactions |
 | `.github/workflows/quality.yml` | GitHub Actions checks on pushes and pull requests |
 | `package.json` | Local `npm run check` without installing dependencies |
@@ -25,13 +26,13 @@ The site prioritizes real software projects and describes experience, education,
 
 ## Content and interactions
 
-- Main sections: About → Selected Work → Expertise → Experience → Education → Credentials → Extended Portfolio → Contact.
-- **Selected Work:** 9 cards; first 6 on page 1, remaining 3 on page 2. System cards point to their live service URLs; research links point to their source portfolio.
+- Main sections: Selected Work → About → Expertise → Experience → Education → Credentials → Extended Portfolio → Contact.
+- **Selected Work:** 9 cards, 3 featured by default; the user can expand the filtered set. Enterprise/Education/Security filters remain available, and links open live systems or approved research references.
 - **Experience:** only two entries, 2023–present computer academic officer (expandable) and 2022–2023 visiting lecturer.
 - **Education:** only the completed M.Ed. in Computer Education (RMU, 2018) and the ongoing Ph.D. in Computer and Digital Education (KMITL).
 - **Typography:** Inter for Latin characters and IBM Plex Sans Thai for Thai; monospace for code and interface labels.
-- **Usability:** mobile navigation, keyboard-accessible experience details, accessible gallery status, theme toggle, reduced-motion support.
-- **No-JavaScript:** all work cards remain visible; interactive filters are hidden.
+- **Usability:** compact mobile Hero, fixed two-action mobile bar (Work/Contact), mobile navigation, accessible project disclosure, theme toggle, reduced-motion support and expandable extended portfolio links.
+- **No-JavaScript:** all nine work cards remain visible; the filter and disclosure controls are hidden. Native extended-portfolio details remain operable.
 
 ## Quality assurance
 
@@ -43,9 +44,20 @@ npm run check
 
 This runs Node's built-in test runner with no third-party runtime or test dependencies. The GitHub Actions workflow runs the same command on pushes to `main` and pull requests.
 
-Coverage: valid internal anchors and identifiers, external link safety attributes, approved education/experience/project counts, CSS structure, theme persistence, mobile menu focus, active section navigation, category filters and keyboard-aware project pagination.
+Coverage: valid internal anchors and identifiers, external-link protections, approved education/experience/project counts, CSS structure, featured-project disclosure, keyboard focus, theme persistence, mobile menu behavior, category filters and privacy-safe conversion events.
 
 **Important:** unit/DOM-mock checks do not replace actual desktop/mobile browser tests. Before release, check 320/360/390/768/1024/1440px widths, 200% zoom, keyboard and screen reader navigation, color contrast, Lighthouse/axe, CSP console errors, external URLs and GitHub Pages deployment.
+
+## Conversion measurement integration
+
+The UI marks primary actions using `data-conversion="view-work"`, `data-conversion="contact"`, or `data-conversion="open-project"`. The frontend emits `portfolio:conversion` CustomEvents with a single anonymous `detail.action` string. **No analytics provider, cookies or network tracking have been added.** Connect consent-aware analytics separately if real conversion rates are needed.
+
+## Performance and UX acceptance
+
+- Check the first meaningful action on mobile: Portfolio card or contact CTA should be easy to reach.
+- Validate the compact hero and 3-card preview at 320, 360, 390, 768, 1024 and 1440 CSS pixels.
+- Validate safe-area padding, focus visibility, browser zoom 200%, reduced motion and light/dark modes.
+- Measure production field LCP, INP and CLS; the codebase does not claim measured performance gains.
 
 ## Local preview
 
