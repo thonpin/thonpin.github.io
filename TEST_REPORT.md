@@ -1,45 +1,37 @@
-# Portfolio quality audit and regression report — 2026-11-05
+# UX redesign implementation and QA report — 2026-11-06
 
-**Repository:** https://github.com/thonpin/thonpin.github.io  
-**Branch:** `main`  
-**Scope:** `index.html`, `assets/css/styles.css`, `assets/js/app.js`, metadata, documentation and new test/CI files.
+Repository: https://github.com/thonpin/thonpin.github.io · Branch: `main`
 
-## Changes implemented
+## Changes delivered
 
-1. Improved light-theme secondary-text contrast by changing `--subtle` to `#506466`.
-2. Increased readability of small project, education and filter labels; improved touch targets.
-3. Made Code Editor horizontally scrollable instead of clipping long lines and retained Python/Java/React stack labels in both visual and accessible hero metadata.
-4. Added keyboard focus management for mobile navigation (open first link, Escape returns to menu button) and paginated gallery (focus updated group).
-5. Removed redundant accessibility announcements; improved no-JavaScript copy while displaying all project cards when scripts are disabled.
-6. Removed unused CSS rules and one redundant media query; preserved the experience, education and project layout.
-7. Moved the footer's owner-requested 10px font size from inline HTML styling to shared CSS.
-8. Added a restrictive baseline CSP meta policy allowing self-hosted assets and Google Fonts; moved the no-script CSS into `assets/css/noscript.css` so the stylesheet CSP does not need `unsafe-inline`. CSP meta cannot replace HTTP response headers.
-9. Added dependency-free Node tests, npm commands, and GitHub Actions quality workflow.
+- **Intent-first page order:** Selected Work now follows the Hero before About.
+- **Compact mobile Hero:** clearer value proposition, two prominent CTAs, technology chips remain visible; decorative code editor is omitted at narrow phone widths to save vertical space.
+- **Featured projects:** show 3 of 9 by default. Filter by all/enterprise/education/security; expand to see all matching cards and collapse again.
+- **Mobile action bar:** always-visible Work and Contact shortcuts on phones/tablets, using safe-area insets and space reserved at the bottom of the document.
+- **Extended Portfolio:** nine original profile deep links remain available in a native, keyboard-operable details accordion.
+- **Atomic design primitives:** new `assets/css/mobile-ux.css` contains semantic design tokens, project explorer, mobile bar and disclosure styles; container queries adjust cards by component width.
+- **Accessible state:** one live-region status, `aria-pressed`, `aria-expanded`, empty-state message, keyboard-vs-pointer focus behavior, reduced-motion preferences.
+- **No-JavaScript:** all nine cards remain visible; inoperative filters and expand controls are hidden by dedicated `noscript.css`.
+- **Conversion hooks:** `data-conversion` attributes on CTAs and project links; anonymous local `portfolio:conversion` CustomEvent, with **no analytics SDK, cookie or outbound tracking**.
+- **Existing security policy:** CSP meta and external-link protection remain unchanged.
+- **Existing content:** nine project records, two experience records and two education cards preserved.
 
-## Verified against current source
+## Latest validation
 
-- No duplicate IDs or dangling internal anchors / ARIA label references.
-- 9 work cards with categories 5 enterprise, 3 education, 1 security; page 1 = 6, page 2 = 3.
-- Education cards: only ongoing KMITL Ph.D. and completed RMU M.Ed.
-- Experience timeline: only 2023–PRESENT and 2022–2023.
-- No reintroduced Curriculum overview links.
-- Theme switch, mobile menu, filter/pager logic and section highlighting verified with DOM mocks.
-- All five committed regression test cases passed in an in-session V8 emulation of Node test semantics; **CI run status and native Node test execution have not yet been independently verified**.
+- [x] Checked current GitHub source after updates.
+- [x] Six V8-based DOM-mock regression tests passed: HTML anchors/IDs, content and no-JS fallback, CSS/contrast, featured gallery filtering, conversion event, theme and keyboard navigation.
+- [ ] Native Node.js runner / GitHub Actions conclusion not independently confirmed.
+- [ ] Browser rendering and manual accessibility validation pending (320–1440 CSS px and 200% zoom).
+- [ ] Production Core Web Vitals (LCP/INP/CLS) and conversion-rate baselines not measured.
 
-## Follow-up verification required
+## Performance principles
 
-- [ ] Run `npm run check` using Node.js 20+ on a real local checkout or inspect GitHub Actions logs.
-- [ ] Confirm the GitHub Pages deployment and live network responses.
-- [ ] Run browser visual and keyboard tests at 320, 360, 390, 768, 1024, and 1440 CSS px, including 200% zoom.
-- [ ] Run axe-core and Lighthouse on both light/dark themes.
-- [ ] Check CSP console violations and HTTP security headers in production.
-- [ ] Verify external legacy-portfolio and live-system links from the target network.
-- [ ] Run a complete repository and Git history secret scan before public release.
+All project filtering remains synchronous in the browser over nine static records; no skeleton or optimistic state is shown because no network request occurs. Container queries and reduced-motion settings provide adaptive behavior without new dependencies. Measure LCP ≤ 2.5 s, INP ≤ 200 ms and CLS ≤ 0.1 against real traffic before making performance claims.
 
 ## Accepted design exception
 
-The compact footer summary remains at 10px by the owner's explicit preference. Other prominent labels and interactive controls were made more legible.
+The footer summary remains 10px per the owner's prior explicit preference; this is smaller than recommended general body text. Native details preserve expandable job history and extended portfolio links.
 
 ## Limitations
 
-Static inspection and DOM-mock testing are not equivalent to a cross-browser visual regression, a full WCAG audit, Lighthouse field metrics or penetration testing. A CSP meta element cannot enforce directives such as `frame-ancestors`.
+DOM mocks do not establish WCAG 2.2 AA compliance, pixel-perfect mobile layout, full cross-browser behavior, security-header compliance or real conversion uplift. Follow up with actual browser tests, axe/Lighthouse and GitHub Pages deployment review.
