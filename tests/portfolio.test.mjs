@@ -5,6 +5,7 @@ import {runInNewContext} from 'node:vm';
 
 const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
 const css=readFileSync(new URL('../assets/css/styles.css',import.meta.url),'utf8');
+const noscriptCss=readFileSync(new URL('../assets/css/noscript.css',import.meta.url),'utf8');
 const script=readFileSync(new URL('../assets/js/app.js',import.meta.url),'utf8');
 
 function all(pattern,source=html){
@@ -40,7 +41,9 @@ test('approved portfolio content and accessibility fallbacks remain present',()=
   for(const tech of ['Python','Java','React','PHP','MariaDB'])assert.ok(html.includes("'"+tech+"'"),tech+' is missing from code editor');
   assert.match(html,/<div class="projects-grid"[^>]*tabindex="-1"/);
   assert.match(html,/id="projects-status"[^>]*role="status"[^>]*aria-live="polite"/);
-  assert.match(html,/<noscript><style>[\s\S]*?\.project-card\[hidden\]\{display:block!important\}/);
+  assert.match(html,/<noscript><link rel="stylesheet" href="assets\/css\/noscript\.css\?v=[^"]+"><\/noscript>/);
+  assert.match(noscriptCss,/\.projects-grid \.project-card\[hidden\]\s*\{\s*display:\s*block\s*!important/);
+  assert.ok(!html.includes("'unsafe-inline'"),'inline CSS should not weaken CSP');
 });
 
 test('CSS supports light contrast, scrolled code and the requested footer size',()=>{
