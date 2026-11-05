@@ -1,0 +1,8 @@
+/* Loaded only when JavaScript is unavailable: reveal all selected projects. */
+.projects-grid .project-card[hidden] {
+  display: block !important;
+}
+.filter-row,
+.project-pagination {
+  display: none !important;
+}
