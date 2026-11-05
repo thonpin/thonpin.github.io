@@ -142,7 +142,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--lime);outline-offse
 /* Portfolio audit 2026-11-05: education, accessibility and contrast */
 .education-section{background:var(--bg);border-top:1px solid var(--line)}
 .education-heading{align-items:end}
-.education-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:stretch}
+.education-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:stretch}
 .education-card{min-width:0;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:13px;padding:26px 25px 24px;border:1px solid var(--line);border-radius:16px;background:var(--surface);transition:border-color .2s,transform .2s}
 .education-card:hover{transform:translateY(-3px);border-color:var(--lime)}
 .education-card::before{content:"";position:absolute;left:0;top:0;right:0;height:3px;background:var(--line)}
@@ -179,7 +179,6 @@ html[data-theme="light"] .contact-right>a{border-bottom-color:#accb90}
 }
 @media(max-width:950px){
   .education-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .education-current{grid-column:1/-1}
 }
 @media(max-width:560px){
   .education-grid{grid-template-columns:1fr}
