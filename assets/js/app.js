@@ -68,61 +68,71 @@
     targets.forEach(section=>observer.observe(section));
   }
 
-  // Filter the nine public work samples, with six displayed per page.
+  // Intent-first Project Explorer: three featured items, expandable on demand.
+  // Static cards remain available without network calls or user-tracking scripts.
   const filters=[...document.querySelectorAll('[data-filter]')];
   const cards=[...document.querySelectorAll('.projects-grid .project-card')];
   const grid=document.getElementById('projects-grid');
-  const pagination=document.getElementById('project-pagination');
-  const prev=document.getElementById('project-prev');
-  const next=document.getElementById('project-next');
+  const toggle=document.getElementById('projects-toggle');
+  const toggleLabel=document.getElementById('projects-toggle-label');
   const pageStatus=document.getElementById('project-page-status');
-  const pageCount=document.getElementById('project-page-count');
   const liveStatus=document.getElementById('projects-status');
-  const pageSize=6;
-  let category='all',page=1;
+  const emptyState=document.getElementById('project-empty');
+  const previewSize=3;
+  let category='all',expanded=false;
 
   const matchingCards=()=>cards.filter(card=>category==='all'||card.dataset.category===category);
-  const renderProjects=()=>{
+  const renderProjects=(announce=false)=>{
     const found=matchingCards();
-    const totalPages=Math.max(1,Math.ceil(found.length/pageSize));
-    page=Math.max(1,Math.min(page,totalPages));
-    cards.forEach(card=>{card.hidden=true});
-    found.slice((page-1)*pageSize,page*pageSize).forEach(card=>{card.hidden=false});
-    if(pagination)pagination.hidden=totalPages<=1;
-    if(prev)prev.disabled=page<=1;
-    if(next)next.disabled=page>=totalPages;
+    const shown=expanded?found:found.slice(0,previewSize);
+    const shownSet=new Set(shown);
 
-    const from=found.length?(page-1)*pageSize+1:0;
-    const to=Math.min(page*pageSize,found.length);
-    const text=found.length?'แสดง '+from+'–'+to+' จาก '+found.length+' ผลงาน':'ไม่พบผลงานในหมวดนี้';
-    if(pageStatus)pageStatus.textContent=text;
-    if(pageCount)pageCount.textContent='หน้า '+page+' จาก '+totalPages;
-    if(liveStatus)liveStatus.textContent=text+' · หน้า '+page+' จาก '+totalPages;
+    cards.forEach(card=>{card.hidden=!shownSet.has(card)});
+    if(emptyState)emptyState.hidden=found.length!==0;
+    if(grid)grid.dataset.view=expanded?'all':'featured';
+
+    if(toggle){
+      toggle.hidden=found.length<=previewSize;
+      toggle.setAttribute('aria-expanded',String(expanded));
+    }
+    if(toggleLabel)toggleLabel.textContent=expanded
+      ? 'แสดงผลงานให้น้อยลง'
+      : 'ดูผลงานทั้งหมด '+found.length+' ระบบ';
+
+    const summary=found.length
+      ? 'แสดง '+shown.length+' จาก '+found.length+' ผลงาน'
+      : 'ไม่พบผลงานในหมวดนี้';
+    if(pageStatus)pageStatus.textContent=summary;
+    if(announce&&liveStatus)liveStatus.textContent=summary;
 
     filters.forEach(button=>{
       const key=button.dataset.filter;
       const selected=key===category;
       button.classList.toggle('active',selected);
       button.setAttribute('aria-pressed',String(selected));
-      const badge=button.querySelector('span');
-      if(badge)badge.textContent=String(cards.filter(card=>key==='all'||card.dataset.category===key).length).padStart(2,'0');
+      const count=button.querySelector('span');
+      if(count)count.textContent=String(cards.filter(card=>key==='all'||card.dataset.category===key).length).padStart(2,'0');
     });
   };
 
   filters.forEach(button=>button.addEventListener('click',()=>{
-    category=button.dataset.filter;page=1;renderProjects();
+    category=button.dataset.filter;
+    expanded=false;
+    renderProjects(true);
   }));
-  const flipPage=direction=>{
-    const max=Math.max(1,Math.ceil(matchingCards().length/pageSize));
-    if(page+direction<1||page+direction>max)return;
-    page+=direction;renderProjects();
-    // Announce the new page and put keyboard focus before its cards.
-    grid?.focus?.({preventScroll:true});
-    const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    grid?.scrollIntoView?.({behavior:reduced?'auto':'smooth',block:'start'});
-  };
-  prev?.addEventListener('click',()=>flipPage(-1));
-  next?.addEventListener('click',()=>flipPage(1));
+
+  toggle?.addEventListener('click',()=>{
+    const toReveal=expanded?null:matchingCards()[previewSize];
+    expanded=!expanded;
+    renderProjects(true);
+    if(expanded){
+      // Focus the first newly revealed destination for keyboard users.
+      toReveal?.querySelector('a[href]')?.focus?.({preventScroll:true});
+    }else{
+      // After collapsing, focus stays on the visible toggle control.
+      toggle.focus?.({preventScroll:true});
+    }
+  });
   renderProjects();
 
   const year=document.getElementById('year');
