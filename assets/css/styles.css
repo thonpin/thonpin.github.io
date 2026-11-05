@@ -219,3 +219,19 @@ html[data-theme="light"] .contact-right>a{border-bottom-color:#accb90}
  .timeline-toggle-icon{width:32px;height:32px}
  .timeline-details{padding-right:12px}
 }
+
+/* Experience: compact two-role timeline */
+.experience-compact{max-width:880px}
+.experience-compact>.section-kicker{margin-bottom:24px}
+.experience-compact .timeline{margin-left:6px}
+.experience-compact .timeline-entry{padding-bottom:22px;margin-bottom:18px}
+.experience-compact .timeline-entry:last-child{padding-bottom:0;margin-bottom:0}
+.experience-compact .timeline-static{padding:13px 12px 15px 0;min-width:0}
+.experience-compact .timeline-static .time-dot{top:19px}
+.experience-compact .timeline-details{padding-top:4px}
+.experience-compact .timeline-details p+p{margin-top:8px}
+.experience-compact .timeline-details strong{color:var(--text);font-weight:700}
+@media(max-width:560px){
+ .experience-compact .timeline-summary{padding-right:0}
+ .experience-compact .timeline-static{padding-right:0}
+}
