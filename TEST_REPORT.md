@@ -13,7 +13,7 @@
 5. Removed redundant accessibility announcements; improved no-JavaScript copy while displaying all project cards when scripts are disabled.
 6. Removed unused CSS rules and one redundant media query; preserved the experience, education and project layout.
 7. Moved the footer's owner-requested 10px font size from inline HTML styling to shared CSS.
-8. Added a restrictive baseline CSP meta policy allowing self-hosted assets and Google Fonts (review in-browser; CSP meta cannot replace HTTP response headers).
+8. Added a restrictive baseline CSP meta policy allowing self-hosted assets and Google Fonts; moved the no-script CSS into `assets/css/noscript.css` so the stylesheet CSP does not need `unsafe-inline`. CSP meta cannot replace HTTP response headers.
 9. Added dependency-free Node tests, npm commands, and GitHub Actions quality workflow.
 
 ## Verified against current source
