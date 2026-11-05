@@ -1,46 +1,38 @@
-# Portfolio release and UI/UX acceptance checklist
+# Mobile-first UX and release acceptance checklist
 
-Repository: `thonpin/thonpin.github.io` · Branch: `main` · Updated: 2026-11-05
+Repository: `thonpin/thonpin.github.io` · Branch: `main` · Updated: 2026-11-06
 
-## Source and content
+## Content and interaction integrity
+- [x] Nine project cards preserved (5 enterprise, 3 education, 1 security).
+- [x] Three featured cards shown initially; expandable filtered lists preserve all records.
+- [x] Two experience records preserved; current role remains expandable.
+- [x] Two education cards preserved; doctoral degree remains in progress.
+- [x] Extended Portfolio's nine original deep links are accessible in a native details section.
+- [x] Removed Curriculum overview links stay removed.
+- [x] No duplicate IDs, dangling anchors or missing ARIA label references.
 
-- [x] Source, CSS and JavaScript reviewed against current `main`.
-- [x] Exactly nine project cards, three categories and six-card pagination.
-- [x] Exactly two experience records; current role details remain collapsible.
-- [x] Exactly two education records; Ph.D. remains in progress.
-- [x] Both Curriculum overview links remain removed.
-- [x] No duplicate IDs, broken fragment targets or missing ARIA references.
-- [x] External `target=_blank` links use `noopener` attributes.
-
-## Quality improvements
-
-- [x] Light-mode secondary text contrast strengthened.
-- [x] Legibility improved across project cards and education labels.
-- [x] Decorative Code Editor has horizontal overflow, not hidden text clipping.
-- [x] Mobile navigation Escape and keyboard focus behavior improved.
-- [x] Project pagination moves keyboard focus to updated results.
-- [x] Duplicate screen reader live announcement removed.
-- [x] No-script view shows all cards with appropriate messaging.
-- [x] Unused CSS rules and redundant media query removed.
-- [x] Footer retained at explicitly requested 10px; implemented in CSS.
-- [x] CSP meta policy added without `unsafe-inline` for CSS; no-script fallback uses a dedicated stylesheet; documented hosting-level limitations.
+## Mobile-first design
+- [x] Simplified Hero and reordered Work before About.
+- [x] Two-action Work / Contact bar with safe-area padding.
+- [x] Compact phone project cards and stat strip.
+- [x] Container-query gallery styles and semantic design tokens.
+- [x] Focus-visible controls and reduced-motion styles.
+- [x] No-JavaScript fallback shows all nine projects.
+- [x] Footer retains the requested 10px text size.
 
 ## Automated verification
+- [x] Dependency-free Node test suite and GitHub Actions quality workflow exist.
+- [x] Six tests replayed successfully using DOM mocks in V8.
+- [ ] Validate native Node test execution and a completed GitHub Actions run.
 
-- [x] Regression suite committed as `tests/portfolio.test.mjs`.
-- [x] npm scripts committed.
-- [x] GitHub Actions quality workflow committed.
-- [x] All five tests replayed successfully against the current code in a V8 test harness.
-- [ ] Validate native Node runner and GitHub Actions status on the actual repository.
+## Manual release checks still required
+- [ ] Verify GitHub Pages publication and browser caching after latest asset updates.
+- [ ] Inspect layouts at 320, 360, 390, 768, 1024 and 1440 CSS pixels.
+- [ ] Test 200% zoom, mobile safe areas, device rotation and sticky-bar focus occlusion.
+- [ ] Confirm keyboard and screen-reader behavior across all filters and details.
+- [ ] Run axe-core WCAG 2.2 AA checks in light/dark/high-contrast modes.
+- [ ] Measure field LCP, INP and CLS; do not infer scores from code review.
+- [ ] Verify external URLs and production CSP/security headers.
+- [ ] Establish baseline conversion events using a consent-aware analytics provider before claiming improvements.
 
-## Production checks still required
-
-- [ ] Confirm new GitHub Pages deployment completes successfully.
-- [ ] Check mobile layouts at 320/360/390px and tablet/desktop at 768/1024/1440px.
-- [ ] Check 200% zoom and screen reader announcements, keyboard tab order and focus visibility.
-- [ ] Run axe-core / Lighthouse and fix any remaining issues.
-- [ ] Check CSP console and HTTP security response headers.
-- [ ] Verify external service and research portfolio URLs.
-- [ ] Inspect repository history for accidental sensitive content before broad distribution.
-
-**Note:** This checklist supersedes the previous pre-publication review state. Headless-browser results from earlier commits are not a validation of the latest commit.
+The earlier 6+3 pagination documentation is superseded by 3-card progressive disclosure. No backend, authentication, user profiles or network analytics were added.
