@@ -28,15 +28,21 @@
     try{localStorage.setItem('thnp-theme',next)}catch(_error){}
   });
 
-  const setMenu=(open)=>{
+  const setMenu=(open,restoreFocus=false)=>{
     if(!nav||!menuBtn)return;
+    const wasOpen=nav.classList.contains('is-open');
     nav.classList.toggle('is-open',open);
     menuBtn.setAttribute('aria-expanded',String(open));
     menuBtn.setAttribute('aria-label',open?'ปิดเมนู':'เปิดเมนู');
+    if(!open&&wasOpen&&restoreFocus&&nav.contains(document.activeElement))menuBtn.focus();
   };
-  menuBtn?.addEventListener('click',()=>setMenu(!nav?.classList.contains('is-open')));
+  menuBtn?.addEventListener('click',()=>{
+    const open=!nav?.classList.contains('is-open');
+    setMenu(open);
+    if(open)navLinks[0]?.focus();
+  });
   navLinks.forEach(link=>link.addEventListener('click',()=>setMenu(false)));
-  document.addEventListener('keydown',event=>{if(event.key==='Escape')setMenu(false)});
+  document.addEventListener('keydown',event=>{if(event.key==='Escape')setMenu(false,true)});
   document.addEventListener('pointerdown',event=>{
     if(nav&&menuBtn&&!nav.contains(event.target)&&!menuBtn.contains(event.target))setMenu(false);
   });
@@ -110,8 +116,10 @@
     const max=Math.max(1,Math.ceil(matchingCards().length/pageSize));
     if(page+direction<1||page+direction>max)return;
     page+=direction;renderProjects();
+    // Announce the new page and put keyboard focus before its cards.
+    grid?.focus?.({preventScroll:true});
     const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    grid?.scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'});
+    grid?.scrollIntoView?.({behavior:reduced?'auto':'smooth',block:'start'});
   };
   prev?.addEventListener('click',()=>flipPage(-1));
   next?.addEventListener('click',()=>flipPage(1));
