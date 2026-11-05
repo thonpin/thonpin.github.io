@@ -23,7 +23,7 @@ Repository: `thonpin/thonpin.github.io` · Branch: `main` · Updated: 2026-11-05
 - [x] No-script view shows all cards with appropriate messaging.
 - [x] Unused CSS rules and redundant media query removed.
 - [x] Footer retained at explicitly requested 10px; implemented in CSS.
-- [x] CSP meta policy added, with documented hosting-level limitations.
+- [x] CSP meta policy added without `unsafe-inline` for CSS; no-script fallback uses a dedicated stylesheet; documented hosting-level limitations.
 
 ## Automated verification
 
