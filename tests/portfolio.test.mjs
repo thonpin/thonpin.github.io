@@ -43,6 +43,7 @@ test('approved portfolio content and accessibility fallbacks remain present',()=
   assert.match(html,/<div class="projects-grid"[^>]*tabindex="-1"/);
   assert.match(html,/id="projects-toggle"[^>]*aria-expanded="false"/);
   assert.match(html,/class="mobile-actions" aria-label="ทางลัดหลักบนมือถือ"/);
+  assert.equal(all(/data-conversion="open-project"/g).length,9);
   assert.match(html,/<details class="explore-disclosure"><summary>/);
   const featured=all(/<article( hidden)? class="project-card/g);
   assert.equal(featured.filter(x=>!x[1]).length,3,'initially show only three featured cards');
@@ -83,7 +84,7 @@ test('CSS supports light contrast, scrolled code and the requested footer size',
 
 function createHarness(){
   let activeElement=null, observerCallback=null, scrolled=0,focused=0;
-  const events={};
+  const events={},emitted=[];
   const makeElement=(id='')=>{
     const state=new Set();
     const element={
@@ -96,7 +97,7 @@ function createHarness(){
       setAttribute(key,value){this.attrs[key]=value},
       removeAttribute(key){delete this.attrs[key]},
       addEventListener(type,callback){this.listeners[type]=callback},
-      click(){this.listeners.click?.()},
+      click(){this.listeners.click?.({detail:0})},
       focus(){activeElement=this;focused++},
       scrollIntoView(){scrolled++},
       contains(value){return value===this}
@@ -139,6 +140,8 @@ function createHarness(){
     innerWidth:390,
     addEventListener(type,callback){events['window:'+type]=callback},
     matchMedia:()=>({matches:true}),
+    CustomEvent:class{constructor(type,init){this.type=type;this.detail=init.detail}},
+    dispatchEvent(event){emitted.push(event)},
     IntersectionObserver:class{
       constructor(callback){observerCallback=callback}
       observe(){}
@@ -150,7 +153,7 @@ function createHarness(){
   };
   runInNewContext(script,{document,window,localStorage});
   const visible=()=>cards.map((card,index)=>card.hidden?null:index+1).filter(Boolean);
-  return {ids,cards,cardLinks,filters,events,navLinks,meta,visible,
+  return {ids,cards,cardLinks,filters,events,emitted,navLinks,meta,visible,
     get focus(){return activeElement},
     get focusCount(){return focused},
     get scrollCount(){return scrolled},
@@ -183,6 +186,15 @@ test('featured projects expand and filter across all nine cards',()=>{
   assert.deepEqual(app.visible(),[1,2,3]);
   assert.equal(app.ids['projects-toggle'].hidden,false);
   assert.match(app.ids['projects-status'].textContent,/9 ผลงาน/);
+});
+
+test('conversion events are emitted locally without tracking requests',()=>{
+  const app=createHarness();
+  app.events.click({target:{closest:()=>({dataset:{conversion:'open-project'}})}});
+  assert.equal(app.emitted.length,1);
+  assert.equal(app.emitted[0].type,'portfolio:conversion');
+  assert.deepEqual(JSON.parse(JSON.stringify(app.emitted[0].detail)),{action:'open-project'});
+  assert.ok(!script.includes('fetch('),'do not add third-party network tracking');
 });
 
 test('theme, keyboard navigation and active section respond correctly',()=>{
