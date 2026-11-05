@@ -350,9 +350,6 @@ html[data-theme="light"] .project-card[data-recent="true"]{border-color:#bdd9b5}
 /* Screen-reader status for category and pagination updates */
 .visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;clip-path:inset(50%)!important}
 
-/* Curriculum-source links for Education cards */
-.education-source{display:inline-flex;align-items:center;gap:7px;align-self:flex-start;color:var(--lime);font-size:11px;font-weight:740;line-height:1.5;letter-spacing:.012em;text-underline-offset:4px;transition:opacity .2s}
-.education-source:hover{text-decoration:underline}
-.education-source:focus-visible{outline:2px solid var(--lime);outline-offset:4px;border-radius:3px}
+/* Education cards: balanced text and footer rhythm */
 .education-card .education-detail{flex:1}
 .education-card .education-footer{width:100%}
