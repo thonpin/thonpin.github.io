@@ -121,19 +121,27 @@
     renderProjects(true);
   }));
 
-  toggle?.addEventListener('click',()=>{
+  toggle?.addEventListener('click',event=>{
+    const fromKeyboard=event?.detail===0;
     const toReveal=expanded?null:matchingCards()[previewSize];
     expanded=!expanded;
     renderProjects(true);
-    if(expanded){
-      // Focus the first newly revealed destination for keyboard users.
-      toReveal?.querySelector('a[href]')?.focus?.({preventScroll:true});
-    }else{
-      // After collapsing, focus stays on the visible toggle control.
-      toggle.focus?.({preventScroll:true});
+    if(fromKeyboard){
+      // Keyboard activation moves to new content; pointer activation avoids scroll jumps.
+      if(expanded)toReveal?.querySelector('a[href]')?.focus?.();
+      else toggle.focus?.();
     }
   });
   renderProjects();
+
+  // Opt-in measurement hook: emits anonymous UI actions, never sends data over network.
+  document.addEventListener('click',event=>{
+    const source=event.target?.closest?.('a[data-conversion]');
+    if(!source||typeof window.CustomEvent!=='function')return;
+    window.dispatchEvent?.(new window.CustomEvent('portfolio:conversion',{
+      detail:{action:source.dataset.conversion}
+    }));
+  });
 
   const year=document.getElementById('year');
   if(year)year.textContent=String(new Date().getFullYear());
