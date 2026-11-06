@@ -9,7 +9,7 @@ const id="1vsPad6qriLIvmullwkpaUC-oEf-gsaUP_q6aCh1F-d8";
 test("read-only Google Docs, Slides and Drive PDF links convert to approved embeds",()=>{
   const cases=[
     ["https://docs.google.com/document/d/"+id+"/edit?usp=sharing","docs","/preview"],
-    ["https://docs.google.com/presentation/d/"+id+"/edit?usp=sharing","slides","/embed?"],
+    ["https://docs.google.com/presentation/d/"+id+"/edit?usp=sharing","slides","/preview"],
     ["https://drive.google.com/file/d/"+id+"/view?usp=sharing","pdf","/preview"],
     ["https://drive.google.com/open?id="+id,"pdf","/preview"]
   ];
