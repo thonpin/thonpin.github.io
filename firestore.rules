@@ -1,0 +1,68 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Grant access only after a Firebase administrator manually creates
+    // article_publishers/{firebase_auth_uid} with { enabled: true }.
+    // Web clients CANNOT create, edit or list Publisher role documents.
+    function isPublisher() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/article_publishers/$(request.auth.uid))
+        && get(/databases/$(database)/documents/article_publishers/$(request.auth.uid)).data.enabled == true;
+    }
+
+    function validArticle(a) {
+      return a.keys().hasOnly([
+          'title','summary','category','sourceUrl','sourceType','status',
+          'authorUid','authorName','createdAt','updatedAt','publishedAt'
+        ])
+        && a.keys().hasAll([
+          'title','summary','category','sourceUrl','sourceType','status',
+          'authorUid','authorName','createdAt','updatedAt','publishedAt'
+        ])
+        && a.title is string && a.title.size() > 0 && a.title.size() <= 160
+        && a.summary is string && a.summary.size() > 0 && a.summary.size() <= 360
+        && a.category in ['software','security','ai-education','research','other']
+        && a.sourceUrl is string && a.sourceUrl.size() > 20 && a.sourceUrl.size() <= 2048
+        && a.sourceUrl.matches('https://(docs[.]google[.]com|drive[.]google[.]com)/.*')
+        && a.sourceType in ['docs','slides','pdf']
+        && a.status in ['draft','published']
+        && a.authorUid is string && a.authorUid.size() > 0 && a.authorUid.size() <= 128
+        && a.authorName is string && a.authorName.size() > 0 && a.authorName.size() <= 100
+        && a.createdAt is timestamp && a.updatedAt is timestamp
+        && (a.publishedAt == null || a.publishedAt is timestamp)
+        && (a.status == 'draft' || a.publishedAt is timestamp);
+    }
+
+    match /article_publishers/{uid} {
+      allow get: if request.auth != null && request.auth.uid == uid;
+      allow list, create, update, delete: if false;
+    }
+
+    match /articles/{articleId} {
+      // Public users can query published articles only. Rules are not filters:
+      // unauthenticated list queries MUST include where('status','==','published').
+      allow get, list: if resource.data.status == 'published' || isPublisher();
+
+      allow create: if isPublisher()
+        && validArticle(request.resource.data)
+        && request.resource.data.authorUid == request.auth.uid
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+
+      allow update: if isPublisher()
+        && validArticle(request.resource.data)
+        && request.resource.data.authorUid == resource.data.authorUid
+        && request.resource.data.authorName == resource.data.authorName
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'title','summary','category','sourceUrl','sourceType','status',
+          'updatedAt','publishedAt'
+        ]);
+
+      // No client-side permanent deletion.
+      allow delete: if false;
+    }
+  }
+}
