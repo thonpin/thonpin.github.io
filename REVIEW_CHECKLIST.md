@@ -36,3 +36,34 @@ Repository: `thonpin/thonpin.github.io` · Branch: `main` · Updated: 2026-11-06
 - [ ] Establish baseline conversion events using a consent-aware analytics provider before claiming improvements.
 
 The earlier 6+3 pagination documentation is superseded by 3-card progressive disclosure. No backend, authentication, user profiles or network analytics were added.
+
+
+## Article publishing module — 2026-11-06
+
+Implemented source files:
+- articles/catalog.html, articles/list.html, articles/post.html, articles/editor.html
+- assets/css/articles.css
+- assets/js/articles-core.js, articles-public.js, articles-editor.js, articles-config.js
+- firestore.rules, firestore.indexes.json, firebase.json
+- tests/articles.test.mjs, ARTICLES_SETUP.md
+
+Home page includes a latest-published-article card, and the main navigation links to the article catalog. Public reads are restricted to published documents; an authenticated Google account requires an explicitly approved Publisher role to write.
+
+Validated in source/V8 emulation:
+- 7 article-module tests and 6 existing portfolio tests passed (13 total)
+- Approved Docs/Slides/Drive link formats and pasted Google iframe parsing
+- Untrusted URL protocols and third-party domains rejected by the parser
+- DOM content via textContent/createElement; no raw author iframe HTML execution
+- Four article pages have no inline script or style and include CSP metadata
+- No Firebase private key, service-account JSON or assigned publisher UID committed
+
+Outstanding external setup and checks:
+- [ ] Create or connect Firebase project and populate public Web Config
+- [ ] Enable Google sign-in and authorize thonpin.github.io
+- [ ] Deploy firestore.rules and firestore.indexes.json to Firebase
+- [ ] Create article_publishers/{UID} with enabled: true via Firebase administrator
+- [ ] Test published/draft behavior from anonymous, signed-in unauthorized and authorized accounts
+- [ ] Verify Google Doc/Slide/Drive public Viewer rights and iframe rendering
+- [ ] Verify live GitHub Pages deployment, mobile layout and GitHub Actions status
+
+Until Firebase setup is complete, the editor intentionally disallows posting, and the latest-article region shows a setup placeholder. No production publication or WCAG certification is claimed.
