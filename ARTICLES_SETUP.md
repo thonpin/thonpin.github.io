@@ -20,7 +20,7 @@ GitHub Pages เป็น Static Hosting จึงใช้ Firebase Authenticat
 2. เปิด Authentication > Sign-in method > Google
 3. เพิ่ม thonpin.github.io ใน Firebase Authentication > Authorized domains (ใส่เฉพาะโดเมน)
 4. สร้าง Cloud Firestore Database และเลือก Region ตามข้อกำหนดด้านข้อมูล
-5. นำ Firebase Web App Config จาก Project Settings ไปกรอกในไฟล์ assets/js/articles-config.js:
+5. ✅ Firebase Web App Config สำหรับ `github-thonpin` ได้เพิ่มลงใน `assets/js/articles-config.js` แล้ว โดยไม่ต้องใส่ซ้ำ:
    - apiKey
    - authDomain
    - projectId
@@ -98,6 +98,6 @@ Collection article_publishers: Document ID = Firebase Authentication UID; field 
 
 ## ข้อจำกัด
 
-Firebase Config และบัญชี Publisher ต้องได้รับการตั้งค่าและอนุมัติก่อน ระบบจึงจะเขียนบทความได้จริง ในระหว่างที่ยังไม่ได้ตั้งค่า หน้า Public แสดงข้อความแจ้งว่ายังไม่เปิดบริการบทความ และหน้า Editor ไม่เปิดให้โพสต์
+Firebase Web Config ได้ตั้งค่าแล้ว แต่ต้องเปิด Google Authentication, สร้างฐานข้อมูล, เผยแพร่ Firestore Rules/Indexes และอนุมัติบัญชี Publisher ก่อน ระบบจึงจะเขียนบทความได้จริง ในระหว่างที่ยังไม่ได้ตั้งค่า หน้า Public แสดงข้อความแจ้งว่ายังไม่เปิดบริการบทความ และหน้า Editor ไม่เปิดให้โพสต์
 
 เนื้อหาจาก Firestore ถูกโหลดด้วย JavaScript หากต้องการ SEO สำหรับเนื้อหาบทความเต็มรูปแบบ อาจพัฒนา Static Generation เพิ่มในอนาคต การวัด Core Web Vitals และทดสอบ Browser จริงยังต้องทำเพิ่มเติม
