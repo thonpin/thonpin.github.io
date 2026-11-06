@@ -21,6 +21,25 @@ function showWorkspace(enabled){
   logout.hidden=!currentUser;
   login.hidden=!!currentUser;
 }
+
+function explainAuthError(code){
+  const messages={
+    "auth/unauthorized-domain":"โดเมน thonpin.github.io ยังไม่ได้รับอนุญาต: ไป Firebase Authentication → Settings → Authorized domains → Add domain",
+    "auth/operation-not-allowed":"ยังไม่ได้เปิด Google Sign-in: ไป Firebase Authentication → Sign-in method → Google → Enable → Save",
+    "auth/popup-blocked":"เบราว์เซอร์บล็อกหน้าต่างเข้าสู่ระบบ กรุณาอนุญาต Pop-ups สำหรับเว็บไซต์นี้ แล้วลองใหม่",
+    "auth/popup-closed-by-user":"หน้าต่าง Google Sign-in ถูกปิดก่อนเข้าสู่ระบบเสร็จ กรุณาลองใหม่",
+    "auth/cancelled-popup-request":"มีการเรียกเปิดหน้าต่างเข้าสู่ระบบซ้ำ กรุณากดเข้าสู่ระบบใหม่อีกครั้ง",
+    "auth/network-request-failed":"เชื่อมต่อบริการ Google/Firebase ไม่สำเร็จ ตรวจเครือข่าย ส่วนขยายที่บล็อกการเชื่อมต่อ หรือทดลองเบราว์เซอร์อื่น",
+    "auth/invalid-api-key":"Firebase API Key ไม่ถูกต้องหรือถูกจำกัดไม่ให้ใช้บริการ Authentication ตรวจค่า Web Config และข้อจำกัด API Key",
+    "auth/api-key-not-valid.-please-pass-a-valid-api-key.":"Firebase API Key ไม่ถูกต้อง ตรวจค่า Web Config จาก Project settings",
+    "auth/invalid-credential":"ข้อมูลยืนยันตัวตนจาก Google ไม่ถูกต้องหรือหมดอายุ กรุณาลองเข้าสู่ระบบใหม่",
+    "auth/account-exists-with-different-credential":"อีเมลนี้เคยลงทะเบียนด้วยวิธีเข้าสู่ระบบอื่น กรุณาตรวจสอบวิธีที่เคยใช้",
+    "auth/web-storage-unsupported":"เบราว์เซอร์ไม่รองรับหรือปิดการจัดเก็บข้อมูลที่ Firebase Authentication ต้องใช้",
+    "auth/too-many-requests":"มีการพยายามเข้าสู่ระบบบ่อยเกินไป กรุณารอสักครู่แล้วลองอีกครั้ง",
+    "auth/internal-error":"Firebase Authentication พบข้อผิดพลาดภายใน โปรดตรวจการเปิด Google Sign-in, โดเมนที่อนุญาต และ Console"
+  };
+  return messages[code]||"เกิดข้อผิดพลาดจาก Firebase Authentication กรุณาตรวจรหัสด้านหน้าและ Console ของเบราว์เซอร์";
+}
 function renderPreview(){
   const parsed=extractGoogleSource(source.value);
   if(!parsed){
@@ -167,10 +186,9 @@ async function bootstrap(){
       try{
         await authApi.signInWithPopup(auth,new authApi.GoogleAuthProvider());
       }catch(error){
-        if(error?.code!=="auth/popup-closed-by-user"){
-          console.error("Google sign-in:",error);
-          notice(authStatus,"เข้าสู่ระบบไม่สำเร็จ กรุณาตรวจสอบ Authorized Domains ของ Firebase และลองใหม่","error");
-        }
+        const code=typeof error?.code==="string"?error.code:"auth/unknown";
+        console.error("Google sign-in:",code,error);
+        notice(authStatus,"เข้าสู่ระบบไม่สำเร็จ ["+code+"]: "+explainAuthError(code),"error");
       }
     });
     logout.addEventListener("click",()=>authApi.signOut(auth));
@@ -197,7 +215,14 @@ async function bootstrap(){
         await loadHistory();
       }catch(error){
         console.error("Publisher role:",error);
-        if(token===authenticationGeneration)notice(authStatus,"ไม่สามารถตรวจสอบสิทธิ์ Publisher ได้ โปรดลองเข้าสู่ระบบใหม่","error");
+        if(token===authenticationGeneration){
+          const guidance=error?.code==="permission-denied"
+            ?"การอ่านสิทธิ์ Publisher ถูกปฏิเสธ ตรวจว่า Firestore Database สร้างแล้วและติดตั้ง firestore.rules"
+            :error?.code==="unavailable"
+              ?"ยังเชื่อมต่อ Firestore ไม่ได้ กรุณาตรวจเครือข่ายและสถานะบริการ"
+              :"ไม่สามารถตรวจสอบสิทธิ์ Publisher ได้ กรุณาตรวจ Firebase Console";
+          notice(authStatus,guidance+" ("+(error?.code||"unknown")+")","error");
+        }
       }
     });
   }catch(error){
