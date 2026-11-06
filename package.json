@@ -6,7 +6,7 @@
   "description": "Dependency-free quality checks for a static developer portfolio",
   "scripts": {
     "check:js": "node --check assets/js/app.js",
-    "test": "node --test tests/portfolio.test.mjs",
+    "test": "node --test",
     "check": "npm run check:js && npm test"
   },
   "engines": {
