@@ -2,7 +2,7 @@ import {firebaseConfig,firebaseConfigured} from "./articles-config.js?v=github-t
 import {ARTICLE_CATEGORIES,createNode,createEmbed,extractGoogleSource,sortArticles} from "./articles-core.js";
 
 const $=id=>document.getElementById(id);
-const login=$("editor-login"),logout=$("editor-logout"),authStatus=$("editor-auth-status");
+const login=$("editor-login"),logout=$("editor-logout"),authStatus=$("editor-auth-status"),authHelp=$("editor-auth-help");
 const workspace=$("editor-workspace"),form=$("article-form"),save=$("editor-save");
 const saveStatus=$("editor-save-status"),previewArea=$("editor-preview-area"),historyArea=$("editor-history");
 const title=$("post-title"),summary=$("post-summary"),category=$("post-category");
@@ -204,6 +204,7 @@ async function bootstrap(){
         const code=typeof error?.code==="string"?error.code:"auth/unknown";
         console.error("Google sign-in:",code,error);
         const clue=code==="auth/internal-error"?" · ผลตรวจเพิ่มเติม: "+authDiagnostic(error):"";
+        if(authHelp)authHelp.hidden=false;
         notice(authStatus,"เข้าสู่ระบบไม่สำเร็จ ["+code+"]: "+explainAuthError(code)+clue,"error");
       }
     });
@@ -212,6 +213,7 @@ async function bootstrap(){
       const token=++authenticationGeneration;
       currentUser=user;authorized=false;editing=null;
       showWorkspace(false);
+      if(user&&authHelp)authHelp.hidden=true;
       if(!user){
         notice(authStatus,"กรุณาเข้าสู่ระบบด้วย Google เพื่อเขียนบทความ");
         return;
