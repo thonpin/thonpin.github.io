@@ -9,6 +9,8 @@ Responsive, static developer portfolio for **Thongn Noppakoon**.
 
 The site prioritizes real software projects and describes experience, education, cybersecurity practices, digital education, and responsible AI-assisted development.
 
+**Article publishing module:** public article catalog, searchable list, embedded reader and Google-login-gated Publisher workspace. This module requires a separate Firebase project, Firestore Rules and Publisher approval before posts can be published. See [ARTICLES_SETUP.md](ARTICLES_SETUP.md).
+
 ## Structure
 
 | Path | Purpose |
@@ -16,6 +18,18 @@ The site prioritizes real software projects and describes experience, education,
 | `index.html` | Semantic one-page portfolio, metadata, 9 selected projects, education, experience |
 | `assets/css/styles.css` | Base responsive layout, light/dark themes and typography |
 | `assets/css/mobile-ux.css` | Conversion-focused mobile components, design tokens and container queries |
+| `assets/css/articles.css` | Mobile-first catalog, article cards, document viewer, editor UI |
+| `articles/catalog.html` | Browse article categories |
+| `articles/list.html` | Search and filter published articles |
+| `articles/post.html` | Article detail with safe Google Docs, Slides or Drive PDF embed |
+| `articles/editor.html` | Google Login and Publisher-only draft/publish form |
+| `assets/js/articles-core.js` | Google link validation, embed URL conversion and card helpers |
+| `assets/js/articles-public.js` | Read-only Firebase public queries, including homepage latest |
+| `assets/js/articles-editor.js` | Auth-gated form and Firestore writing |
+| `assets/js/articles-config.js` | Firebase public web configuration (empty until owner setup) |
+| `firestore.rules`, `firestore.indexes.json` | Server-enforced access and latest-post index |
+| `tests/articles.test.mjs` | Embed security and article module contract tests |
+| `ARTICLES_SETUP.md` | Firebase onboarding and Publisher approval checklist |
 | `assets/css/noscript.css` | Unhides all project cards only when JavaScript is disabled |
 | `assets/js/app.js` | Theme, menu, three-project preview, category filters, disclosure and local conversion events |
 | `tests/portfolio.test.mjs` | Node built-in regression tests: structure, accessibility contracts, interactions |
@@ -33,6 +47,14 @@ The site prioritizes real software projects and describes experience, education,
 - **Typography:** Inter for Latin characters and IBM Plex Sans Thai for Thai; monospace for code and interface labels.
 - **Usability:** compact mobile Hero, fixed two-action mobile bar (Work/Contact), mobile navigation, accessible project disclosure, theme toggle, reduced-motion support and expandable extended portfolio links.
 - **No-JavaScript:** all nine work cards remain visible; the filter and disclosure controls are hidden. Native extended-portfolio details remain operable.
+
+## Articles: publish workflow
+
+The homepage shows a **Latest article** card once Firebase is configured and at least one article is published. Catalog, List and Reader are publicly readable; Editor requires Google Authentication and a Publisher role that is granted server-side through Firestore Rules.
+
+Accepted Google URLs: Docs, Slides and Drive file previews; pasted Google iframe snippets are parsed to extract only approved source URLs. Files must remain accessible to visitors using Google sharing / Publish-to-web permissions. No arbitrary third-party iframe HTML is rendered.
+
+**Activation steps:** [ARTICLES_SETUP.md](ARTICLES_SETUP.md). Until the owner completes Firebase Web Config, Auth provider setup, Firestore Rules/Indexes and Publisher enrollment, the composer intentionally remains locked and public pages show a setup placeholder.
 
 ## Quality assurance
 
