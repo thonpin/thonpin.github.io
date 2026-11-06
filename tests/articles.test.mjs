@@ -84,7 +84,9 @@ test("publishing remains locked behind Firebase Auth and immutable publisher rol
   assert.match(editor,/signInWithPopup/);
   assert.match(editor,/role\.exists\(\)&&role\.data\(\)\.enabled===true/);
   assert.ok(!editor.includes("innerHTML"),"raw iframe HTML must not be inserted into DOM");
-  assert.match(config,/apiKey:""/);
+  assert.match(config,/projectId:"github-thonpin"/);
+  assert.match(config,/authDomain:"github-thonpin\.firebaseapp\.com"/);
+  assert.match(config,/apiKey:"AIza[^"]+"/);
   const index=JSON.parse(read("firestore.indexes.json"));
   assert.equal(index.indexes[0].fields[1].fieldPath,"publishedAt");
 });
