@@ -24,7 +24,7 @@ export function parseGoogleSource(value){
       type=match[1]==="document"?"docs":"slides";
       embed="https://docs.google.com/"+match[1]+"/d/"+match[2]+(type==="docs"?"/preview":(path.includes("/embed")||path.includes("/pub")?"/embed?start=false&loop=false&delayms=3000":"/preview"));
     }else{
-      match=new RegExp("^/(document|presentation)/d/e/("+idPattern+")/(?:pub|embed)/?$").exec(path);
+      match=new RegExp("^/(document|presentation)/d/e/("+idPattern+")/(?:pub|pubhtml|embed)/?$").exec(path);
       if(!match)return null;
       type=match[1]==="document"?"docs":"slides";
       embed="https://docs.google.com/"+match[1]+"/d/e/"+match[2]+(type==="docs"?"/pub?embedded=true":"/embed?start=false&loop=false&delayms=3000");
