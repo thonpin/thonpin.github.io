@@ -122,3 +122,12 @@
 }
 
 .article-bottom-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+
+/* On-demand Firebase login troubleshooting: collapsed until an error occurs. */
+.article-auth-help{margin-top:14px;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 15px;color:var(--muted);font-size:12px;line-height:1.8}
+.article-auth-help summary{cursor:pointer;color:var(--text);font-weight:740;min-height:28px}
+.article-auth-help ol{margin:10px 0 12px;padding-left:23px}
+.article-auth-help li{padding:3px 0;overflow-wrap:anywhere}
+.article-auth-help code{font-size:11px;overflow-wrap:anywhere}
+.article-auth-help a{color:var(--lime);text-decoration:underline;text-underline-offset:3px}
+.article-auth-help summary:focus-visible{outline:3px solid var(--lime);outline-offset:3px}
