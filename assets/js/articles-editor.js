@@ -1,4 +1,4 @@
-import {firebaseConfig,firebaseConfigured} from "./articles-config.js";
+import {firebaseConfig,firebaseConfigured} from "./articles-config.js?v=github-thonpin-20261106";
 import {ARTICLE_CATEGORIES,createNode,createEmbed,extractGoogleSource,sortArticles} from "./articles-core.js";
 
 const $=id=>document.getElementById(id);
