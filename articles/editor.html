@@ -35,7 +35,7 @@
 <div class="article-auth-panel" id="editor-auth">
 <h2>เข้าสู่ระบบผู้เขียน</h2>
 <p>ต้องเข้าสู่ระบบด้วย Google และได้รับสิทธิ์ Publisher ก่อนจึงจะสร้าง แก้ไข หรือเผยแพร่บทความได้ การเข้าสู่ระบบเพียงอย่างเดียวไม่ให้สิทธิ์เผยแพร่</p>
-<div class="article-editor-actions"><button type="button" class="article-button" id="editor-login" disabled>เข้าสู่ระบบด้วย Google</button><button type="button" class="article-button article-button--outline" id="editor-logout" hidden>ออกจากระบบ</button></div>
+<div class="article-editor-actions"><button type="button" class="article-button" id="editor-login" disabled>เข้าสู่ระบบด้วย Google</button><button type="button" class="article-button article-button--outline" id="editor-logout" hidden>ออกจากระบบ</button><button type="button" class="article-button article-button--outline" id="editor-retry" hidden>ตรวจสอบ Firestore อีกครั้ง</button></div>
 <p id="editor-auth-status" class="article-message" role="status" aria-live="polite">กำลังตรวจสอบการตั้งค่าระบบ...</p>
 <details id="editor-auth-help" class="article-auth-help" hidden>
 <summary>เข้าสู่ระบบไม่ได้? ตรวจสอบการตั้งค่า Firebase</summary>
@@ -96,6 +96,6 @@
 </main>
 <footer class="article-footer"><div class="shell"><span>© <span id="year">2026</span> · thonpin</span><a href="./list.html">บทความทั้งหมด</a></div></footer>
 <script defer src="../assets/js/app.js?v=mobile-ux-20261106"></script>
-<script type="module" src="../assets/js/articles-editor.js?v=auth-internal-20261106"></script>
+<script type="module" src="../assets/js/articles-editor.js?v=firestore-retry-20261106"></script>
 </body>
 </html>
