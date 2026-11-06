@@ -6,7 +6,7 @@
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <meta content="dark light" name="color-scheme"/>
 <meta content="#08110f" name="theme-color"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; form-action 'none'; upgrade-insecure-requests"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://www.gstatic.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com; frame-src https://docs.google.com https://drive.google.com https://*.firebaseapp.com; form-action 'none'; upgrade-insecure-requests"/>
 <meta content="Thongn Noppakoon | Software Engineering, AI, Cybersecurity, ระบบสารสนเทศองค์กร ประสบการณ์ และประวัติการศึกษา" name="description"/>
 <meta content="Thongn Noppakoon" name="author"/>
 <meta content="index,follow" name="robots"/>
@@ -17,10 +17,11 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/styles.css?v=quality-refresh-20261105">
 <link rel="stylesheet" href="assets/css/mobile-ux.css?v=ux-launch-20261106">
+<link rel="stylesheet" href="assets/css/articles.css?v=articles-20261106">
 <noscript><link rel="stylesheet" href="assets/css/noscript.css?v=ux-launch-20261106"></noscript>
 <title>Thongn Noppakoon — Software Engineering &amp; Web Developer</title>
 <meta content="Thongn Noppakoon | Software Engineer &amp; Developer" property="og:title"/><meta content="https://thonpin.github.io/" property="og:url"/><meta content="Software Engineering, AI-assisted Development, Cybersecurity และนวัตกรรมการศึกษา พร้อมผลงานและประวัติการศึกษา" property="og:description"/><meta content="website" property="og:type"/><meta content="th_TH" property="og:locale"/><meta content="summary" name="twitter:card"/></head>
-<body>
+<body data-articles-view="home">
 <a class="skip-link" href="#main">ข้ามไปยังเนื้อหาหลัก</a>
 <svg aria-hidden="true" class="icon-bank" xmlns="http://www.w3.org/2000/svg">
 <symbol id="i-arrow-up-right" viewbox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"></path></symbol>
@@ -43,7 +44,7 @@
 <div class="shell nav-bar">
 <a aria-label="THNP กลับหน้าหลัก" class="brand" href="#top"><span class="brand-box">T<span class="brand-slash">/</span>N</span><span class="brand-name">thonpin <small>PORTFOLIO / 2026</small></span></a>
 <nav aria-label="เมนูหลัก" class="nav-links" id="primary-nav">
-<a href="#work">ผลงาน</a><a href="#about">เกี่ยวกับ</a><a href="#expertise">ความเชี่ยวชาญ</a><a href="#journey">ประสบการณ์</a><a href="#education">การศึกษา</a><a href="#credentials">คุณวุฒิ</a><a href="#explore">เพิ่มเติม</a>
+<a href="#work">ผลงาน</a><a href="#about">เกี่ยวกับ</a><a href="#expertise">ความเชี่ยวชาญ</a><a href="#journey">ประสบการณ์</a><a href="#education">การศึกษา</a><a href="#credentials">คุณวุฒิ</a><a href="articles/catalog.html">บทความ</a><a href="#explore">เพิ่มเติม</a>
 </nav>
 <div class="nav-actions">
 <button aria-label="เปลี่ยนธีมสี" class="icon-button theme-toggle" id="theme-toggle" type="button"><svg class="icon moon-icon"><use href="#i-moon"></use></svg><svg class="icon sun-icon"><use href="#i-sun"></use></svg></button>
@@ -122,6 +123,14 @@
 <div class="work-note">✳ รวม 9 ผลงาน • การ์ดระบบงานเชื่อมไปยังเว็บไซต์ที่พัฒนาโดยตรง • <a href="https://dini.srru.ac.th/port/?view=projects#projects" rel="noopener noreferrer" target="_blank">ดูผลงานอื่น ๆ ใน Portfolio ฉบับเต็ม ↗</a></div><noscript><p class="work-note">แสดงผลงานทั้งหมดแล้ว หากต้องการใช้ตัวกรองและการยุบ–ขยาย กรุณาเปิดใช้งาน JavaScript</p></noscript>
 </div>
 </section>
+<section class="article-section article-section--alt" aria-labelledby="latest-article-heading" id="latest-article-section">
+<div class="shell">
+<div class="article-page-header"><div><span class="section-kicker">LATEST / ARTICLES</span><h2 class="display-title" id="latest-article-heading">Latest <em>article.</em></h2><p>บทความและองค์ความรู้จาก Google Docs, Slides และเอกสาร PDF พร้อมเปิดอ่านบนเว็บไซต์</p></div>
+<a class="article-button article-button--outline" href="articles/catalog.html">แคตตาล็อกบทความ ↗</a></div>
+<div id="article-latest" data-articles-root class="article-home-latest" aria-label="บทความล่าสุด">
+<div class="article-notice"><h3>กำลังโหลดบทความล่าสุด...</h3><p>ดูบทความและเอกสารประกอบได้จากแคตตาล็อกบทความ</p></div>
+</div>
+</div></section>
 <section aria-labelledby="about-heading" class="section-pad about-section" id="about">
 <div class="shell about-grid">
 <div class="section-side"><span class="section-kicker">02 / WHO I AM</span><div class="side-rule"></div><p>BEYOND<br/>THE CODE</p></div>
@@ -200,5 +209,7 @@
 <nav class="mobile-actions" aria-label="ทางลัดหลักบนมือถือ"><a class="mobile-action-primary" href="#work" data-conversion="view-work">ดูผลงาน <svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"></use></svg></a><a class="mobile-action-secondary" href="#contact" data-conversion="contact">ติดต่อ <svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"></use></svg></a></nav>
 <footer class="site-footer"><div class="shell footer-inner"><div class="footer-brand">T<span>/</span>N <small>THONGN NOPPAKOON</small></div><p>© <span id="year">2026</span> Thongn Noppakoon. Software Engineering Portfolio.</p><a href="#top">BACK TO TOP ↑</a></div><div class="shell footer-note">Portfolio สรุปผลงานระบบสารสนเทศ ประสบการณ์ ประวัติการศึกษา และการเรียนรู้อย่างต่อเนื่อง · <a href="https://dini.srru.ac.th/port/" rel="noopener noreferrer" target="_blank">ข้อมูลฉบับเต็มที่ dini.srru.ac.th/port</a></div></footer>
 <script defer src="assets/js/app.js?v=ux-launch-20261106"></script>
+<p class="visually-hidden" id="articles-status" role="status" aria-live="polite" aria-atomic="true"></p>
+<script type="module" src="assets/js/articles-public.js?v=articles-20261106"></script>
 </body>
 </html>
