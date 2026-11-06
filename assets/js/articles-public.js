@@ -1,4 +1,4 @@
-import {firebaseConfig,firebaseConfigured} from "./articles-config.js";
+import {firebaseConfig,firebaseConfigured} from "./articles-config.js?v=github-thonpin-20261106";
 import {ARTICLE_CATEGORIES,categoryName,createNode,createArticleCard,createEmbed,formatArticleDate,sortArticles,parseGoogleSource} from "./articles-core.js";
 
 const view=document.body.dataset.articlesView;
