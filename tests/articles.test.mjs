@@ -101,3 +101,18 @@ test("Firebase scripts, embedding frames and Google assets are declared in CSP",
     assert.ok(!html.includes("'unsafe-inline'"));
   }
 });
+
+test("Google sign-in shows actionable Firebase error codes rather than one generic message",()=>{
+  const editor=read("assets/js/articles-editor.js");
+  const page=read("articles/editor.html");
+  for(const code of [
+    "auth/unauthorized-domain",
+    "auth/operation-not-allowed",
+    "auth/popup-blocked",
+    "auth/network-request-failed"
+  ])assert.ok(editor.includes(code),"missing diagnostic: "+code);
+  assert.match(editor,/explainAuthError\(code\)/);
+  assert.match(editor,/Firebase Authentication/);
+  assert.match(editor,/const guidance=error\?\.code==="permission-denied"/);
+  assert.match(page,/articles-editor\.js\?v=auth-diagnostics-20261106/);
+});
