@@ -113,8 +113,8 @@ test("Google sign-in shows actionable Firebase error codes rather than one gener
   ])assert.ok(editor.includes(code),"missing diagnostic: "+code);
   assert.match(editor,/explainAuthError\(code\)/);
   assert.match(editor,/Firebase Authentication/);
-  assert.match(editor,/const guidance=error\?\.code==="permission-denied"/);
-  assert.match(page,/articles-editor\.js\?v=auth-internal-20261106/);
+  assert.match(editor,/code==="permission-denied"/);
+  assert.match(page,/articles-editor\.js\?v=firestore-retry-20261106/);
   assert.match(page,/id="editor-auth-help"/);
   assert.match(editor,/function authDiagnostic\(error\)/);
   assert.ok(!editor.includes("notice(authStatus,error.message"),"do not expose raw OAuth credentials");
@@ -136,4 +136,17 @@ test("Google popup CSP permits the exact API script blocked by Chrome DevTools",
     assert.ok(!csp.includes("'unsafe-inline'"),"unsafe-inline regression in "+file);
     assert.ok(!csp.includes("https: *"),"unscoped script URL in "+file);
   }
+});
+
+test("publisher check uses REST-only Firestore and supports safe retry after offline errors",()=>{
+  const js=read("assets/js/articles-editor.js");
+  const html=read("articles/editor.html");
+  assert.match(js,/firebase-firestore-lite\.js/);
+  assert.ok(!js.includes('import("https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js")'));
+  assert.match(js,/function checkPublisher\(user,token\)/);
+  assert.match(js,/client is offline/);
+  assert.match(js,/retry\?\.addEventListener\("click"/);
+  assert.match(js,/authenticationGeneration/);
+  assert.match(html,/id="editor-retry" hidden/);
+  assert.match(html,/firestore-retry-20261106/);
 });
