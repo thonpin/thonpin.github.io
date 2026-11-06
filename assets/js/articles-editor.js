@@ -2,7 +2,7 @@ import {firebaseConfig,firebaseConfigured} from "./articles-config.js?v=github-t
 import {ARTICLE_CATEGORIES,createNode,createEmbed,extractGoogleSource,sortArticles} from "./articles-core.js";
 
 const $=id=>document.getElementById(id);
-const login=$("editor-login"),logout=$("editor-logout"),authStatus=$("editor-auth-status"),authHelp=$("editor-auth-help");
+const login=$("editor-login"),logout=$("editor-logout"),retry=$("editor-retry"),authStatus=$("editor-auth-status"),authHelp=$("editor-auth-help");
 const workspace=$("editor-workspace"),form=$("article-form"),save=$("editor-save");
 const saveStatus=$("editor-save-status"),previewArea=$("editor-preview-area"),historyArea=$("editor-history");
 const title=$("post-title"),summary=$("post-summary"),category=$("post-category");
@@ -178,6 +178,46 @@ async function saveArticle(event){
 }
 form?.addEventListener("submit",saveArticle);
 
+async function checkPublisher(user,token){
+  if(!user||!db||!fs)return;
+  if(retry){retry.hidden=true;retry.disabled=true;}
+  notice(authStatus,"กำลังตรวจสอบสิทธิ์ Publisher จาก Cloud Firestore...");
+  try{
+    const role=await fs.getDoc(fs.doc(db,"article_publishers",user.uid));
+    if(token!==authenticationGeneration)return;
+    authorized=role.exists()&&role.data().enabled===true;
+    showWorkspace(authorized);
+    if(!authorized){
+      notice(authStatus,"เข้าสู่ระบบ Google สำเร็จแล้ว แต่ยังไม่มีสิทธิ์ Publisher: ให้ผู้ดูแลสร้าง article_publishers/{UID} พร้อมฟิลด์ enabled = true ใน Cloud Firestore","error");
+      if(retry)retry.hidden=false;
+      return;
+    }
+    notice(authStatus,"เข้าสู่ระบบสำเร็จ · "+(user.displayName||"ผู้เขียน")+" · สามารถเผยแพร่บทความได้","success");
+    await loadForEdit();
+    await loadHistory();
+  }catch(error){
+    console.error("Publisher role:",error);
+    if(token!==authenticationGeneration)return;
+    const code=error?.code||"unknown";
+    const isOffline=code==="unavailable"||/client is offline|failed to get document because the client is offline/i.test(error?.message||"");
+    let guidance;
+    if(isOffline){
+      guidance="Google Login สำเร็จ แต่ยังติดต่อ Cloud Firestore ไม่ได้ โปรดตรวจว่า Firebase Project github-thonpin สร้างฐานข้อมูล (default) แล้ว, Firestore API พร้อมใช้งาน และไม่มี Firewall/Extension บล็อก firestore.googleapis.com";
+      if(typeof navigator!=="undefined"&&navigator.onLine===false)guidance+=" · เบราว์เซอร์รายงานว่าออฟไลน์";
+    }else if(code==="permission-denied"){
+      guidance="Firestore ปฏิเสธการอ่านสิทธิ์ Publisher ตรวจว่าติดตั้ง firestore.rules ลงฐานข้อมูล (default) จริง และบัญชีนี้ได้รับสิทธิ์อ่านเอกสาร article_publishers/{UID}";
+    }else if(code==="failed-precondition"){
+      guidance="Firestore ยังตั้งค่าไม่ครบ โปรดตรวจฐานข้อมูล (default) และ Indexes";
+    }else{
+      guidance="ตรวจสอบ Firestore Database, Security Rules และ Network → firestore.googleapis.com";
+    }
+    notice(authStatus,guidance+" ["+code+"]","error");
+    if(retry)retry.hidden=false;
+  }finally{
+    if(retry&&token===authenticationGeneration)retry.disabled=false;
+  }
+}
+
 async function bootstrap(){
   if(!firebaseConfigured){
     notice(authStatus,"ยังไม่ได้เชื่อม Firebase: ต้องตั้งค่า articles-config.js, เปิด Google Login, ติดตั้งกฎ Firestore และอนุมัติบัญชี Publisher ก่อน");
@@ -188,7 +228,7 @@ async function bootstrap(){
     const [{initializeApp},authModule,firestoreModule]=await Promise.all([
       import("https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js"),
       import("https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js"),
-      import("https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js")
+      import("https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore-lite.js")
     ]);
     authApi=authModule;
     fs=firestoreModule;
@@ -209,39 +249,18 @@ async function bootstrap(){
       }
     });
     logout.addEventListener("click",()=>authApi.signOut(auth));
-    authApi.onAuthStateChanged(auth,async user=>{
+    retry?.addEventListener("click",()=>checkPublisher(currentUser,authenticationGeneration));
+    authApi.onAuthStateChanged(auth,user=>{
       const token=++authenticationGeneration;
       currentUser=user;authorized=false;editing=null;
       showWorkspace(false);
+      if(retry)retry.hidden=true;
       if(user&&authHelp)authHelp.hidden=true;
       if(!user){
         notice(authStatus,"กรุณาเข้าสู่ระบบด้วย Google เพื่อเขียนบทความ");
         return;
       }
-      notice(authStatus,"กำลังตรวจสอบสิทธิ์บัญชีผู้เขียน...");
-      try{
-        const role=await fs.getDoc(fs.doc(db,"article_publishers",user.uid));
-        if(token!==authenticationGeneration)return;
-        authorized=role.exists()&&role.data().enabled===true;
-        showWorkspace(authorized);
-        if(!authorized){
-          notice(authStatus,"เข้าสู่ระบบแล้ว แต่บัญชีนี้ยังไม่ได้รับสิทธิ์ Publisher โปรดติดต่อผู้ดูแลระบบ","error");
-          return;
-        }
-        notice(authStatus,"เข้าสู่ระบบสำเร็จ · "+(user.displayName||"ผู้เขียน")+" · สามารถเผยแพร่บทความได้","success");
-        await loadForEdit();
-        await loadHistory();
-      }catch(error){
-        console.error("Publisher role:",error);
-        if(token===authenticationGeneration){
-          const guidance=error?.code==="permission-denied"
-            ?"การอ่านสิทธิ์ Publisher ถูกปฏิเสธ ตรวจว่า Firestore Database สร้างแล้วและติดตั้ง firestore.rules"
-            :error?.code==="unavailable"
-              ?"ยังเชื่อมต่อ Firestore ไม่ได้ กรุณาตรวจเครือข่ายและสถานะบริการ"
-              :"ไม่สามารถตรวจสอบสิทธิ์ Publisher ได้ กรุณาตรวจ Firebase Console";
-          notice(authStatus,guidance+" ("+(error?.code||"unknown")+")","error");
-        }
-      }
+      void checkPublisher(user,token);
     });
   }catch(error){
     console.error("Article editor initialization:",error);
