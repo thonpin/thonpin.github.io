@@ -26,7 +26,7 @@ The site prioritizes real software projects and describes experience, education,
 | `assets/js/articles-core.js` | Google link validation, embed URL conversion and card helpers |
 | `assets/js/articles-public.js` | Read-only Firebase public queries, including homepage latest |
 | `assets/js/articles-editor.js` | Auth-gated form and Firestore writing |
-| `assets/js/articles-config.js` | Firebase public web configuration (empty until owner setup) |
+| `assets/js/articles-config.js` | Firebase public Web Config for `github-thonpin` (connected; server services still require setup) |
 | `firestore.rules`, `firestore.indexes.json` | Server-enforced access and latest-post index |
 | `tests/articles.test.mjs` | Embed security and article module contract tests |
 | `ARTICLES_SETUP.md` | Firebase onboarding and Publisher approval checklist |
@@ -54,7 +54,7 @@ The homepage shows a **Latest article** card once Firebase is configured and at 
 
 Accepted Google URLs: Docs, Slides and Drive file previews; pasted Google iframe snippets are parsed to extract only approved source URLs. Files must remain accessible to visitors using Google sharing / Publish-to-web permissions. No arbitrary third-party iframe HTML is rendered.
 
-**Activation steps:** [ARTICLES_SETUP.md](ARTICLES_SETUP.md). Until the owner completes Firebase Web Config, Auth provider setup, Firestore Rules/Indexes and Publisher enrollment, the composer intentionally remains locked and public pages show a setup placeholder.
+**Activation steps:** [ARTICLES_SETUP.md](ARTICLES_SETUP.md). Firebase Web Config for `github-thonpin` has been populated from the registered Web App. Authentication provider setup, Firestore Rules/Indexes deployment and Publisher enrollment **remain required**. Until those steps are complete, the editor cannot publish, and public pages may show a database-permission or setup error.
 
 ## Quality assurance
 
