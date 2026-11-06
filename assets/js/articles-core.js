@@ -22,7 +22,7 @@ export function parseGoogleSource(value){
     match=new RegExp("^/(document|presentation)/d/("+idPattern+")/(?:edit|view|preview|pub|embed)?/?$").exec(path);
     if(match){
       type=match[1]==="document"?"docs":"slides";
-      embed="https://docs.google.com/"+match[1]+"/d/"+match[2]+(type==="docs"?"/preview":"/embed?start=false&loop=false&delayms=3000");
+      embed="https://docs.google.com/"+match[1]+"/d/"+match[2]+(type==="docs"?"/preview":(path.includes("/embed")||path.includes("/pub")?"/embed?start=false&loop=false&delayms=3000":"/preview"));
     }else{
       match=new RegExp("^/(document|presentation)/d/e/("+idPattern+")/(?:pub|embed)/?$").exec(path);
       if(!match)return null;
