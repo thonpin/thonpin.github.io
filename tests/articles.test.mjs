@@ -114,5 +114,8 @@ test("Google sign-in shows actionable Firebase error codes rather than one gener
   assert.match(editor,/explainAuthError\(code\)/);
   assert.match(editor,/Firebase Authentication/);
   assert.match(editor,/const guidance=error\?\.code==="permission-denied"/);
-  assert.match(page,/articles-editor\.js\?v=auth-diagnostics-20261106/);
+  assert.match(page,/articles-editor\.js\?v=auth-internal-20261106/);
+  assert.match(page,/id="editor-auth-help"/);
+  assert.match(editor,/function authDiagnostic\(error\)/);
+  assert.ok(!editor.includes("notice(authStatus,error.message"),"do not expose raw OAuth credentials");
 });
