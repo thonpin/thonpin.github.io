@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="th" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08110f">
+<meta name="robots" content="noindex,nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://www.gstatic.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com; frame-src https://docs.google.com https://drive.google.com https://*.firebaseapp.com; form-action 'self'; upgrade-insecure-requests">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/styles.css?v=quality-refresh-20261105">
+<link rel="stylesheet" href="../assets/css/articles.css?v=articles-20261106">
+<title>จัดการบทความ · thonpin</title>
+</head>
+<body>
+<a class="skip-link" href="#main">ข้ามไปยังเนื้อหาหลัก</a>
+<header class="article-header"><div class="shell article-header__inner">
+<a class="article-brand" href="../index.html">T<span>/</span>N <small>ARTICLE EDITOR</small></a>
+<nav class="article-nav" aria-label="เมนูบทความ">
+<a href="../index.html">หน้าแรก</a><a href="./catalog.html">หมวดหมู่</a><a href="./list.html">บทความทั้งหมด</a><a href="./editor.html" aria-current="page">เขียนบทความ</a>
+</nav>
+<button type="button" class="icon-button theme-toggle" id="theme-toggle" aria-label="เปลี่ยนธีมสี" title="เปลี่ยนธีมสี">◐</button>
+</div></header>
+<main id="main">
+<section class="article-hero"><div class="shell">
+<p class="article-breadcrumbs"><a href="../index.html">Portfolio</a> / <a href="./catalog.html">บทความ</a> / จัดการบทความ</p>
+<span class="article-eyebrow">AUTHOR WORKSPACE / GOOGLE LOGIN</span>
+<h1>เขียนและเผยแพร่บทความ</h1>
+<p>ระบุชื่อเรื่อง คำอธิบายและวางลิงก์ Google Docs, Google Slides หรือ PDF จาก Drive ระบบจะแปลงเป็น Embed สำหรับการอ่านโดยอัตโนมัติ</p>
+</div></section>
+<section class="article-section article-section--alt" aria-label="จัดการบทความ">
+<div class="shell">
+<div class="article-auth-panel" id="editor-auth">
+<h2>เข้าสู่ระบบผู้เขียน</h2>
+<p>ต้องเข้าสู่ระบบด้วย Google และได้รับสิทธิ์ Publisher ก่อนจึงจะสร้าง แก้ไข หรือเผยแพร่บทความได้ การเข้าสู่ระบบเพียงอย่างเดียวไม่ให้สิทธิ์เผยแพร่</p>
+<div class="article-editor-actions"><button type="button" class="article-button" id="editor-login" disabled>เข้าสู่ระบบด้วย Google</button><button type="button" class="article-button article-button--outline" id="editor-logout" hidden>ออกจากระบบ</button></div>
+<p id="editor-auth-status" class="article-message" role="status" aria-live="polite">กำลังตรวจสอบการตั้งค่าระบบ...</p>
+</div>
+<div id="editor-workspace" hidden>
+<div class="article-editor-layout">
+<div class="article-editor-panel">
+<h2 id="editor-heading">สร้างบทความใหม่</h2>
+<form class="article-editor-form" id="article-form">
+<div class="article-field">
+<label for="post-title">ชื่อบทความ *</label>
+<input id="post-title" name="title" maxlength="160" required autocomplete="off" placeholder="เช่น ออกแบบ Secure Web Application อย่างไร">
+</div>
+<div class="article-field">
+<label for="post-summary">คำอธิบายสั้น *</label>
+<textarea id="post-summary" name="summary" maxlength="360" rows="4" required placeholder="สรุปสิ่งที่ผู้อ่านจะได้รับจากบทความ"></textarea>
+<small>แสดงบนการ์ดบทความและหน้าอ่าน</small>
+</div>
+<div class="article-field">
+<label for="post-category">หมวดบทความ *</label>
+<select id="post-category" name="category" required>
+<option value="software">Software Engineering</option><option value="security">Cybersecurity</option><option value="ai-education">AI &amp; Digital Education</option><option value="research">Research &amp; Innovation</option><option value="other">บทความทั่วไป</option>
+</select>
+</div>
+<div class="article-field">
+<label for="post-source">ลิงก์เอกสารหรือ Embed code *</label>
+<textarea id="post-source" name="source" rows="3" required spellcheck="false" placeholder="วางลิงก์ Google Docs, Google Slides หรือ PDF ใน Google Drive"></textarea>
+<small>รองรับลิงก์แชร์แบบดูอย่างเดียว หรือตัวอย่าง iframe embed ที่คัดลอกจาก Google โดยไม่เก็บโค้ด HTML ใด ๆ ผู้เข้าชมต้องมีสิทธิ์ดูไฟล์ต้นฉบับ</small>
+</div>
+<div class="article-field">
+<label for="post-status">สถานะ *</label>
+<select id="post-status" name="status"><option value="draft">บันทึกฉบับร่าง</option><option value="published">เผยแพร่สาธารณะ</option></select>
+</div>
+<div class="article-editor-actions">
+<button type="button" class="article-button article-button--outline" id="editor-preview">ดูตัวอย่าง Embed</button>
+<button type="submit" class="article-button" id="editor-save">บันทึกบทความ</button>
+<a class="article-button article-button--muted" href="./editor.html">สร้างรายการใหม่</a>
+</div>
+<p class="article-message" id="editor-save-status" role="status" aria-live="polite"></p>
+</form>
+</div>
+<aside class="article-editor-panel article-editor-preview">
+<h2>ตัวอย่างเอกสาร</h2>
+<div id="editor-preview-area" class="article-preview-placeholder">วางลิงก์และกด “ดูตัวอย่าง Embed” เพื่อดูการแสดงผลก่อนบันทึก</div>
+</aside>
+</div>
+<div class="article-editor-panel article-editor-history"><h2>บทความในระบบ</h2><div id="editor-history" class="article-article-history"><p>กำลังโหลดรายการ...</p></div></div>
+</div>
+</div>
+</section>
+</main>
+<footer class="article-footer"><div class="shell"><span>© <span id="year">2026</span> · thonpin</span><a href="./list.html">บทความทั้งหมด</a></div></footer>
+<script defer src="../assets/js/app.js?v=mobile-ux-20261106"></script>
+<script type="module" src="../assets/js/articles-editor.js?v=articles-20261106"></script>
+</body>
+</html>
