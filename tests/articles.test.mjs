@@ -119,3 +119,21 @@ test("Google sign-in shows actionable Firebase error codes rather than one gener
   assert.match(editor,/function authDiagnostic\(error\)/);
   assert.ok(!editor.includes("notice(authStatus,error.message"),"do not expose raw OAuth credentials");
 });
+
+test("Google popup CSP permits the exact API script blocked by Chrome DevTools",()=>{
+  const pages=["index.html","articles/catalog.html","articles/list.html","articles/post.html","articles/editor.html"];
+  for(const file of pages){
+    const page=read(file);
+    const csp=page.match(/<meta http-equiv="Content-Security-Policy" content="([^"]+)"/)?.[1];
+    assert.ok(csp,"CSP missing in "+file);
+    const directives=Object.fromEntries(csp.split(";").map(part=>part.trim()).filter(Boolean).map(part=>{
+      const [key,...sources]=part.split(/\s+/);
+      return [key,sources];
+    }));
+    assert.ok(directives["script-src"].includes("https://apis.google.com"),"Google API script blocked in "+file);
+    assert.ok(directives["connect-src"].includes("https://www.gstatic.com"),"Firebase source map blocked in "+file);
+    assert.ok(directives["frame-src"].includes("https://accounts.google.com/gsi/"),"Google sign-in iframe blocked in "+file);
+    assert.ok(!csp.includes("'unsafe-inline'"),"unsafe-inline regression in "+file);
+    assert.ok(!csp.includes("https: *"),"unscoped script URL in "+file);
+  }
+});
