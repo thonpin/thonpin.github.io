@@ -39,6 +39,18 @@ export function parseGoogleSource(value){
   return {type,embedUrl:embed,sourceUrl:url.href};
 }
 
+// Accept Google's pasted iframe snippet only as input; never store or render raw HTML.
+export function extractGoogleSource(input){
+  if(typeof input!=="string")return null;
+  let candidate=input.trim();
+  if(/^<iframe\\b/i.test(candidate)){
+    const match=/\\bsrc\\s*=\\s*(["'])(https:\\/\\/[^"'<>]+)\\1/i.exec(candidate);
+    if(!match)return null;
+    candidate=match[2].replaceAll("&amp;","&");
+  }
+  return parseGoogleSource(candidate);
+}
+
 export function formatArticleDate(value){
   const date=typeof value?.toDate==="function"?value.toDate():value instanceof Date?value:null;
   if(!date||!Number.isFinite(date.getTime()))return "";
@@ -78,7 +90,7 @@ export function createArticleCard(article,{featured=false,hrefPrefix=""}={}){
 export function createEmbed(sourceUrl,title){
   const parsed=parseGoogleSource(sourceUrl);
   if(!parsed)return null;
-  const figure=createNode("figure","article-embed");
+  const figure=createNode("figure","article-embed"+(parsed.type==="slides"?" article-embed--slides":""));
   const frame=createNode("iframe","article-embed__frame");
   frame.src=parsed.embedUrl;
   frame.title="เอกสารประกอบบทความ: "+(title||"เอกสาร");
