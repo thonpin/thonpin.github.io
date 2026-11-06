@@ -43,8 +43,8 @@ export function parseGoogleSource(value){
 export function extractGoogleSource(input){
   if(typeof input!=="string")return null;
   let candidate=input.trim();
-  if(/^<iframe\\b/i.test(candidate)){
-    const match=/\\bsrc\\s*=\\s*(["'])(https:\\/\\/[^"'<>]+)\\1/i.exec(candidate);
+  if(/^<iframe\b/i.test(candidate)){
+    const match=/\bsrc\s*=\s*(["'])(https:\/\/[^"'<>]+)\1/i.exec(candidate);
     if(!match)return null;
     candidate=match[2].replaceAll("&amp;","&");
   }
