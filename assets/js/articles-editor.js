@@ -16,6 +16,21 @@ function notice(element,text,level=""){
   element.textContent=text;
   element.dataset.level=level;
 }
+// Show only a controlled diagnostic label, never OAuth URLs, codes or tokens.
+function authDiagnostic(error){
+  const raw=typeof error?.message==="string"?error.message:"";
+  const checks=[
+    [/CONFIGURATION_NOT_FOUND/i,"Firebase Authentication ยังไม่พร้อมใช้งานหรือโปรเจกต์ตั้งค่าไม่ครบ"],
+    [/OPERATION_NOT_ALLOWED/i,"Google Sign-in ยังไม่ได้เปิดใช้งาน"],
+    [/INVALID_IDP_RESPONSE|INVALID_CREDENTIAL_OR_PROVIDER_ID/i,"Firebase ปฏิเสธข้อมูลตอบกลับจาก Google: ตรวจการตั้งค่า OAuth Client และ Redirect URI"],
+    [/redirect_uri_mismatch/i,"OAuth Redirect URI ไม่ตรงกับที่อนุญาตใน Google Cloud"],
+    [/API_KEY_SERVICE_BLOCKED|API_KEY_INVALID/i,"Firebase API Key ถูกจำกัดหรือไม่ถูกต้อง"],
+    [/blocked by Content Security Policy|Content Security Policy/i,"เบราว์เซอร์อาจบล็อกคำขอตามนโยบาย CSP"],
+    [/network|Failed to fetch/i,"การเชื่อมต่อบริการ Firebase หรือ Google อาจถูกบล็อก"]
+  ];
+  return checks.find(([pattern])=>pattern.test(raw))?.[1]||"ไม่พบรายละเอียดสาเหตุเพิ่มเติมใน Error Message ของ Firebase";
+}
+
 function showWorkspace(enabled){
   workspace.hidden=!enabled;
   logout.hidden=!currentUser;
@@ -36,7 +51,7 @@ function explainAuthError(code){
     "auth/account-exists-with-different-credential":"อีเมลนี้เคยลงทะเบียนด้วยวิธีเข้าสู่ระบบอื่น กรุณาตรวจสอบวิธีที่เคยใช้",
     "auth/web-storage-unsupported":"เบราว์เซอร์ไม่รองรับหรือปิดการจัดเก็บข้อมูลที่ Firebase Authentication ต้องใช้",
     "auth/too-many-requests":"มีการพยายามเข้าสู่ระบบบ่อยเกินไป กรุณารอสักครู่แล้วลองอีกครั้ง",
-    "auth/internal-error":"Firebase Authentication พบข้อผิดพลาดภายใน โปรดตรวจการเปิด Google Sign-in, โดเมนที่อนุญาต และ Console"
+    "auth/internal-error":"Firebase ตอบกลับด้วยข้อผิดพลาดภายใน: ตรวจ Google Sign-in = Enabled, Authorized domains (thonpin.github.io และ github-thonpin.firebaseapp.com), OAuth redirect URI และดู Network Response ของ identitytoolkit.googleapis.com"
   };
   return messages[code]||"เกิดข้อผิดพลาดจาก Firebase Authentication กรุณาตรวจรหัสด้านหน้าและ Console ของเบราว์เซอร์";
 }
@@ -188,7 +203,8 @@ async function bootstrap(){
       }catch(error){
         const code=typeof error?.code==="string"?error.code:"auth/unknown";
         console.error("Google sign-in:",code,error);
-        notice(authStatus,"เข้าสู่ระบบไม่สำเร็จ ["+code+"]: "+explainAuthError(code),"error");
+        const clue=code==="auth/internal-error"?" · ผลตรวจเพิ่มเติม: "+authDiagnostic(error):"";
+        notice(authStatus,"เข้าสู่ระบบไม่สำเร็จ ["+code+"]: "+explainAuthError(code)+clue,"error");
       }
     });
     logout.addEventListener("click",()=>authApi.signOut(auth));
