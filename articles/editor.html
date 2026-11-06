@@ -37,6 +37,15 @@
 <p>ต้องเข้าสู่ระบบด้วย Google และได้รับสิทธิ์ Publisher ก่อนจึงจะสร้าง แก้ไข หรือเผยแพร่บทความได้ การเข้าสู่ระบบเพียงอย่างเดียวไม่ให้สิทธิ์เผยแพร่</p>
 <div class="article-editor-actions"><button type="button" class="article-button" id="editor-login" disabled>เข้าสู่ระบบด้วย Google</button><button type="button" class="article-button article-button--outline" id="editor-logout" hidden>ออกจากระบบ</button></div>
 <p id="editor-auth-status" class="article-message" role="status" aria-live="polite">กำลังตรวจสอบการตั้งค่าระบบ...</p>
+<details id="editor-auth-help" class="article-auth-help" hidden>
+<summary>เข้าสู่ระบบไม่ได้? ตรวจสอบการตั้งค่า Firebase</summary>
+<ol>
+<li>Firebase Authentication → Sign-in method → Google: เปิดใช้งานและกด Save</li>
+<li>Authentication → Settings → Authorized domains: ต้องมี <code>thonpin.github.io</code> และ <code>github-thonpin.firebaseapp.com</code></li>
+<li>หากยังขึ้น <code>auth/internal-error</code> เปิด DevTools (F12) → Network แล้วตรวจการตอบกลับจาก <code>identitytoolkit.googleapis.com</code> โดยไม่แชร์ Token, OAuth code หรือ Request Payload</li>
+</ol>
+<a href="https://console.firebase.google.com/project/github-thonpin/overview" target="_blank" rel="noopener noreferrer">เปิด Firebase Console ↗</a>
+</details>
 </div>
 <div id="editor-workspace" hidden>
 <div class="article-editor-layout">
@@ -87,6 +96,6 @@
 </main>
 <footer class="article-footer"><div class="shell"><span>© <span id="year">2026</span> · thonpin</span><a href="./list.html">บทความทั้งหมด</a></div></footer>
 <script defer src="../assets/js/app.js?v=mobile-ux-20261106"></script>
-<script type="module" src="../assets/js/articles-editor.js?v=auth-diagnostics-20261106"></script>
+<script type="module" src="../assets/js/articles-editor.js?v=auth-internal-20261106"></script>
 </body>
 </html>
