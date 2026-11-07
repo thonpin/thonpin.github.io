@@ -185,26 +185,38 @@ function parseGoogleSource(value){
   const host=url.hostname.toLowerCase();
   const path=url.pathname;
   const idPattern="[A-Za-z0-9_-]{10,}";
-  let match,type,embed;
+  let match,type,embed,canonical;
   if(host==="docs.google.com"){
     match=new RegExp("^/(document|presentation)/d/("+idPattern+")/(?:edit|view|preview|pub|embed)?/?$").exec(path);
     if(match){
       type=match[1]==="document"?"docs":"slides";
-      embed="https://docs.google.com/"+match[1]+"/d/"+match[2]+(type==="docs"?"/preview":(path.includes("/embed")||path.includes("/pub")?"/embed?start=false&loop=false&delayms=3000":"/preview"));
+      const base="https://docs.google.com/"+match[1]+"/d/"+match[2];
+      // Do not copy OAuth, tracking, or untrusted query/fragment values
+      // into public article records or outbound links.
+      canonical=base+"/edit";
+      embed=base+(type==="docs"?"/preview":
+        (path.includes("/embed")||path.includes("/pub")?
+          "/embed?start=false&loop=false&delayms=3000":"/preview"));
     }else{
       match=new RegExp("^/(document|presentation)/d/e/("+idPattern+")/(?:pub|pubhtml|embed)/?$").exec(path);
       if(!match)return null;
       type=match[1]==="document"?"docs":"slides";
-      embed="https://docs.google.com/"+match[1]+"/d/e/"+match[2]+(type==="docs"?"/pub?embedded=true":"/embed?start=false&loop=false&delayms=3000");
+      const base="https://docs.google.com/"+match[1]+"/d/e/"+match[2];
+      canonical=base+(type==="docs"?"/pub?embedded=true":"/embed?start=false&loop=false&delayms=3000");
+      embed=canonical;
     }
   }else if(host==="drive.google.com"){
     match=new RegExp("^/file/d/("+idPattern+")/(?:view|preview|edit)?/?$").exec(path);
     const id=match?.[1]||(path==="/open"||path==="/uc"?url.searchParams.get("id"):null);
     if(!id||!new RegExp("^"+idPattern+"$").test(id))return null;
     type="pdf";
-    embed="https://drive.google.com/file/d/"+id+"/preview";
+    const key=url.searchParams.get("resourcekey");
+    if(key!==null&&!/^[A-Za-z0-9_-]{8,200}$/.test(key))return null;
+    const suffix=key?"?resourcekey="+key:"";
+    canonical="https://drive.google.com/file/d/"+id+"/view"+suffix;
+    embed="https://drive.google.com/file/d/"+id+"/preview"+suffix;
   }else{return null;}
-  return {type,embedUrl:embed,sourceUrl:url.href};
+  return {type,embedUrl:embed,sourceUrl:canonical};
 }
 
 // Accept Google's pasted iframe snippet only as input; never store or render raw HTML.
@@ -454,7 +466,7 @@ async function saveArticle(event){
     await loadHistory();
   }catch(error){
     console.error("Save article:",error);
-    notice(saveStatus,"บันทึกไม่สำเร็จ: "+(error?.code==="permission-denied"?"บัญชีไม่มีสิทธิ์เขียนหรือข้อมูลไม่ผ่านกฎ Firestore":"ตรวจการเชื่อมต่อฐานข้อมูลแล้วลองใหม่"),"error");
+    notice(saveStatus,"บันทึกไม่สำเร็จ: "+(error?.code==="permission-denied"?"Firestore ปฏิเสธคำขอ: ตรวจรูปแบบลิงก์ Google Drive/Docs และสิทธิ์บัญชีผู้เผยแพร่ หรือรีโหลดหน้าเพื่อใช้โค้ดล่าสุด":"ตรวจการเชื่อมต่อฐานข้อมูลแล้วลองใหม่"),"error");
   }finally{save.disabled=false;}
 }
 form?.addEventListener("submit",saveArticle);
