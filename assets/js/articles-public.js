@@ -379,6 +379,35 @@ function renderPost(post){
   announce("เปิดบทความ "+post.title);
 }
 
+// The fast latest-article query needs the (status, publishedAt DESC)
+// composite index. Some newly connected Firebase projects have not deployed
+// firestore.indexes.json yet. The fallback still enforces published-only
+// reads server-side and sorts the public results locally.
+async function fetchLatestPublished(fs,db){
+  const articles=fs.collection(db,"articles");
+  try{
+    const indexed=fs.query(articles,fs.where("status","==","published"),
+      fs.orderBy("publishedAt","desc"),fs.limit(1));
+    const snapshot=await fs.getDocs(indexed);
+    return snapshot.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(error){
+    if(error?.code!=="failed-precondition")throw error;
+    console.warn("Latest article composite index not available; using published-only fallback");
+    const publishedOnly=fs.query(articles,fs.where("status","==","published"));
+    const snapshot=await fs.getDocs(publishedOnly);
+    return sortArticles(snapshot.docs.map(d=>({id:d.id,...d.data()}))).slice(0,1);
+  }
+}
+function articleLoadErrorMessage(error){
+  if(error?.code==="permission-denied")
+    return "Firestore ปฏิเสธการอ่านบทความเผยแพร่ กรุณาตรวจ Firestore Rules ของ collection articles";
+  if(error?.code==="failed-precondition")
+    return "Firestore ยังไม่พร้อมสำหรับคำสั่งค้นหาบทความ โปรดตรวจ Composite Index ของ status และ publishedAt";
+  if(error?.code==="unavailable"||error?.code==="deadline-exceeded")
+    return "ไม่สามารถเชื่อมต่อ Firestore ได้ในขณะนี้ กรุณาตรวจเครือข่ายแล้วลองโหลดใหม่";
+  return "โปรดลองโหลดหน้าใหม่ หรือตรวจสอบการตั้งค่า Firestore และสิทธิ์การอ่านบทความ";
+}
+
 async function boot(){
   if(!root||!view)return;
   if(!firebaseConfigured){
@@ -410,10 +439,7 @@ async function boot(){
     }
     let results;
     if(view==="home"){
-      const q=fs.query(fs.collection(db,"articles"),fs.where("status","==","published"),
-        fs.orderBy("publishedAt","desc"),fs.limit(1));
-      const snapshot=await fs.getDocs(q);
-      results=snapshot.docs.map(d=>({id:d.id,...d.data()}));
+      results=await fetchLatestPublished(fs,db);
     }else{
       const q=fs.query(fs.collection(db,"articles"),fs.where("status","==","published"));
       const snapshot=await fs.getDocs(q);
@@ -423,9 +449,10 @@ async function boot(){
     if(view==="catalog")renderCatalog(results);
     if(view==="list")renderSearchableList(results);
   }catch(error){
-    console.error("Article catalog load:",error);
+    // Never expose raw Firestore diagnostic URLs or backend details in UI.
+    console.error("Article catalog load:",error?.code||"unknown");
     const path=view==="home"?"articles/list.html":"./list.html";
-    showMessage(root,"โหลดบทความไม่สำเร็จ","โปรดลองโหลดหน้าใหม่ หรือตรวจสอบการตั้งค่า Firestore และสิทธิ์การอ่านบทความ",path,"รายการบทความ");
+    showMessage(root,"โหลดบทความไม่สำเร็จ",articleLoadErrorMessage(error),path,"รายการบทความ");
     announce("ไม่สามารถโหลดบทความได้");
   }
 }
