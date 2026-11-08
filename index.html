@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html class="no-js" data-theme="dark" lang="th">
+<html data-theme="dark" lang="th">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
@@ -15,7 +15,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/styles.css?v=minimal-secure-20261107">
+<link rel="stylesheet" href="assets/css/styles.css?v=quality-refresh-20261105">
+<link rel="stylesheet" href="assets/css/mobile-ux.css?v=ux-launch-20261106">
+<link rel="stylesheet" href="assets/css/articles.css?v=articles-20261106">
+<noscript><link rel="stylesheet" href="assets/css/noscript.css?v=ux-launch-20261106"></noscript>
 <title>Thongn Noppakoon — Software Engineering &amp; Web Developer</title>
 <meta content="Thongn Noppakoon | Software Engineer &amp; Developer" property="og:title"/><meta content="https://thonpin.github.io/" property="og:url"/><meta content="Software Engineering, AI-assisted Development, Cybersecurity และนวัตกรรมการศึกษา พร้อมผลงานและประวัติการศึกษา" property="og:description"/><meta content="website" property="og:type"/><meta content="th_TH" property="og:locale"/><meta content="summary" name="twitter:card"/></head>
 <body data-articles-view="home">
@@ -45,6 +48,7 @@
 </nav>
 <div class="nav-actions">
 <button aria-label="เปลี่ยนธีมสี" class="icon-button theme-toggle" id="theme-toggle" type="button"><svg class="icon moon-icon"><use href="#i-moon"></use></svg><svg class="icon sun-icon"><use href="#i-sun"></use></svg></button>
+<a class="icon-button nav-create-article" href="articles/editor.html" aria-label="เขียนบทความใหม่ (สำหรับผู้ดูแล)" title="เขียนบทความใหม่">＋</a>
 <a class="nav-contact" href="#contact">Let's connect <svg class="icon"><use href="#i-arrow-up-right"></use></svg></a>
 <button aria-controls="primary-nav" aria-expanded="false" aria-label="เปิดเมนู" class="icon-button menu-toggle" id="menu-toggle" type="button"><svg class="icon"><use href="#i-menu"></use></svg></button>
 </div>
@@ -123,7 +127,7 @@
 <section class="article-section article-section--alt" aria-labelledby="latest-article-heading" id="latest-article-section">
 <div class="shell">
 <div class="article-page-header"><div><span class="section-kicker">LATEST / ARTICLES</span><h2 class="display-title" id="latest-article-heading">Latest <em>article.</em></h2><p>บทความและองค์ความรู้จาก Google Docs, Slides และเอกสาร PDF พร้อมเปิดอ่านบนเว็บไซต์</p></div>
-<a class="article-button article-button--outline" href="articles/catalog.html">แคตตาล็อกบทความ ↗</a></div>
+<div class="article-page-actions"><a class="article-button article-button--outline" href="articles/catalog.html">แคตตาล็อกบทความ ↗</a><a class="article-button article-button--create" href="articles/editor.html" aria-label="เขียนบทความใหม่ (สำหรับผู้ดูแล)">＋ เขียนบทความใหม่</a></div></div>
 <div id="article-latest" data-articles-root class="article-home-latest" aria-label="บทความล่าสุด">
 <div class="article-notice"><h3>กำลังโหลดบทความล่าสุด...</h3><p>ดูบทความและเอกสารประกอบได้จากแคตตาล็อกบทความ</p></div>
 </div>
@@ -205,7 +209,8 @@
 </main>
 <nav class="mobile-actions" aria-label="ทางลัดหลักบนมือถือ"><a class="mobile-action-primary" href="#work" data-conversion="view-work">ดูผลงาน <svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"></use></svg></a><a class="mobile-action-secondary" href="#contact" data-conversion="contact">ติดต่อ <svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"></use></svg></a></nav>
 <footer class="site-footer"><div class="shell footer-inner"><div class="footer-brand">T<span>/</span>N <small>THONGN NOPPAKOON</small></div><p>© <span id="year">2026</span> Thongn Noppakoon. Software Engineering Portfolio.</p><a href="#top">BACK TO TOP ↑</a></div><div class="shell footer-note">Portfolio สรุปผลงานระบบสารสนเทศ ประสบการณ์ ประวัติการศึกษา และการเรียนรู้อย่างต่อเนื่อง · <a href="https://dini.srru.ac.th/port/" rel="noopener noreferrer" target="_blank">ข้อมูลฉบับเต็มที่ dini.srru.ac.th/port</a></div></footer>
+<script defer src="assets/js/app.js?v=ux-launch-20261106"></script>
 <p class="visually-hidden" id="articles-status" role="status" aria-live="polite" aria-atomic="true"></p>
-<script type="module" src="assets/js/articles-public.js?v=latest-index-fallback-20261107"></script>
+<script type="module" src="assets/js/articles-public.js?v=firebase-linked-20261106"></script>
 </body>
 </html>

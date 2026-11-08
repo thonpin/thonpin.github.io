@@ -11,7 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/styles.css?v=minimal-secure-20261107">
+<link rel="stylesheet" href="../assets/css/styles.css?v=quality-refresh-20261105">
+<link rel="stylesheet" href="../assets/css/articles.css?v=articles-20261106">
 <title>แคตตาล็อกบทความ | thonpin</title>
 </head>
 <body data-articles-view="catalog">
@@ -22,7 +23,7 @@
 <a href="../index.html">หน้าแรก</a>
 <a href="./catalog.html" aria-current="page">หมวดหมู่</a>
 <a href="./list.html">บทความทั้งหมด</a>
-<a href="./editor.html">เขียนบทความ</a>
+<a class="article-nav__create" href="./editor.html" aria-label="เขียนบทความใหม่ (สำหรับผู้ดูแล)">＋ เขียนบทความ</a>
 </nav>
 <button type="button" class="icon-button theme-toggle" id="theme-toggle" aria-label="เปลี่ยนธีมสี" title="เปลี่ยนธีมสี">◐</button>
 </div></header>
@@ -39,6 +40,7 @@
 </div></section></main>
 <footer class="article-footer"><div class="shell"><span>© <span id="year">2026</span> · thonpin / Developer Portfolio</span><a href="../index.html">กลับหน้า Portfolio</a></div></footer>
 <p class="visually-hidden" id="articles-status" role="status" aria-live="polite" aria-atomic="true"></p>
-<script type="module" src="../assets/js/articles-public.js?v=minimal-secure-20261107"></script>
+<script defer src="../assets/js/app.js?v=mobile-ux-20261106"></script>
+<script type="module" src="../assets/js/articles-public.js?v=firebase-linked-20261106"></script>
 </body>
 </html>

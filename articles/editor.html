@@ -10,7 +10,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/styles.css?v=minimal-secure-20261107">
+<link rel="stylesheet" href="../assets/css/styles.css?v=quality-refresh-20261105">
+<link rel="stylesheet" href="../assets/css/articles.css?v=auth-help-20261106">
 <title>จัดการบทความ · thonpin</title>
 </head>
 <body>
@@ -18,7 +19,7 @@
 <header class="article-header"><div class="shell article-header__inner">
 <a class="article-brand" href="../index.html">T<span>/</span>N <small>ARTICLE EDITOR</small></a>
 <nav class="article-nav" aria-label="เมนูบทความ">
-<a href="../index.html">หน้าแรก</a><a href="./catalog.html">หมวดหมู่</a><a href="./list.html">บทความทั้งหมด</a><a href="./editor.html" aria-current="page">เขียนบทความ</a>
+<a href="../index.html">หน้าแรก</a><a href="./catalog.html">หมวดหมู่</a><a href="./list.html">บทความทั้งหมด</a><a class="article-nav__create" href="./editor.html" aria-current="page" aria-label="เขียนบทความใหม่ (สำหรับผู้ดูแล)">＋ เขียนบทความ</a>
 </nav>
 <button type="button" class="icon-button theme-toggle" id="theme-toggle" aria-label="เปลี่ยนธีมสี" title="เปลี่ยนธีมสี">◐</button>
 </div></header>
@@ -33,7 +34,7 @@
 <div class="shell">
 <div class="article-auth-panel" id="editor-auth">
 <h2>เข้าสู่ระบบผู้เขียน</h2>
-<p>ต้องเข้าสู่ระบบด้วย Google และได้รับสิทธิ์ Publisher ก่อนจึงจะสร้าง แก้ไข หรือเผยแพร่บทความได้ การเข้าสู่ระบบเพียงอย่างเดียวไม่ให้สิทธิ์เผยแพร่</p>
+<p>เฉพาะบัญชี Google tpssrru@gmail.com ที่ยืนยันอีเมลแล้วและได้รับสิทธิ์ใน Firestore เท่านั้น จึงจะเพิ่ม แก้ไข หรือจัดการบทความได้ ผู้ใช้อื่นสามารถอ่านบทความที่เผยแพร่แล้วได้</p>
 <div class="article-editor-actions"><button type="button" class="article-button" id="editor-login" disabled>เข้าสู่ระบบด้วย Google</button><button type="button" class="article-button article-button--outline" id="editor-logout" hidden>ออกจากระบบ</button><button type="button" class="article-button article-button--outline" id="editor-retry" hidden>ตรวจสอบ Firestore อีกครั้ง</button></div>
 <p id="editor-auth-status" class="article-message" role="status" aria-live="polite">กำลังตรวจสอบการตั้งค่าระบบ...</p>
 <details id="editor-auth-help" class="article-auth-help" hidden>
@@ -49,16 +50,17 @@
 <div id="editor-workspace" hidden>
 <div class="article-editor-layout">
 <div class="article-editor-panel">
-<h2 id="editor-heading">สร้างบทความใหม่</h2>
+<div class="article-editor-heading"><h2 id="editor-heading">สร้างบทความใหม่</h2><p class="article-message" id="editor-dirty-status" role="status" aria-live="polite">ยังไม่มีการแก้ไข</p></div>
 <form class="article-editor-form" id="article-form">
 <div class="article-field">
 <label for="post-title">ชื่อบทความ *</label>
-<input id="post-title" name="title" maxlength="160" required autocomplete="off" placeholder="เช่น ออกแบบ Secure Web Application อย่างไร">
+<input id="post-title" name="title" maxlength="160" required autocomplete="off" aria-describedby="post-title-count" placeholder="เช่น ออกแบบ Secure Web Application อย่างไร">
+<small class="article-field__counter" id="post-title-count">0/160 อักขระ</small>
 </div>
 <div class="article-field">
 <label for="post-summary">คำอธิบายสั้น *</label>
-<textarea id="post-summary" name="summary" maxlength="360" rows="4" required placeholder="สรุปสิ่งที่ผู้อ่านจะได้รับจากบทความ"></textarea>
-<small>แสดงบนการ์ดบทความและหน้าอ่าน</small>
+<textarea id="post-summary" name="summary" maxlength="360" rows="4" required aria-describedby="post-summary-hint post-summary-count" placeholder="สรุปสิ่งที่ผู้อ่านจะได้รับจากบทความ"></textarea>
+<small id="post-summary-hint">แสดงบนการ์ดบทความและหน้าอ่าน</small><small class="article-field__counter" id="post-summary-count">0/360 อักขระ</small>
 </div>
 <div class="article-field">
 <label for="post-category">หมวดบทความ *</label>
@@ -68,12 +70,13 @@
 </div>
 <div class="article-field">
 <label for="post-source">ลิงก์เอกสารหรือ Embed code *</label>
-<textarea id="post-source" name="source" rows="3" required spellcheck="false" placeholder="วางลิงก์ Google Docs, Google Slides หรือ PDF ใน Google Drive"></textarea>
-<small>รองรับลิงก์แชร์แบบดูอย่างเดียว หรือตัวอย่าง iframe embed ที่คัดลอกจาก Google โดยไม่เก็บโค้ด HTML ใด ๆ ผู้เข้าชมต้องมีสิทธิ์ดูไฟล์ต้นฉบับ</small>
+<textarea id="post-source" name="source" rows="3" required spellcheck="false" aria-describedby="post-source-hint post-source-check" placeholder="วางลิงก์ Google Docs, Google Slides หรือ PDF ใน Google Drive"></textarea>
+<small id="post-source-hint">รองรับลิงก์แชร์แบบดูอย่างเดียว หรือตัวอย่าง iframe embed ที่คัดลอกจาก Google โดยไม่เก็บโค้ด HTML ใด ๆ ผู้เข้าชมต้องมีสิทธิ์ดูไฟล์ต้นฉบับ</small><small id="post-source-check" role="status" aria-live="polite">ยังไม่ได้ระบุลิงก์เอกสาร</small>
 </div>
 <div class="article-field">
 <label for="post-status">สถานะ *</label>
-<select id="post-status" name="status"><option value="draft">บันทึกฉบับร่าง</option><option value="published">เผยแพร่สาธารณะ</option></select>
+<select id="post-status" name="status" aria-describedby="post-status-hint"><option value="draft">บันทึกฉบับร่าง</option><option value="published">เผยแพร่สาธารณะ</option></select>
+<small id="post-status-hint">ฉบับร่างจะไม่แสดงต่อสาธารณะ</small>
 </div>
 <div class="article-editor-actions">
 <button type="button" class="article-button article-button--outline" id="editor-preview">ดูตัวอย่าง Embed</button>
@@ -88,12 +91,26 @@
 <div id="editor-preview-area" class="article-preview-placeholder">วางลิงก์และกด “ดูตัวอย่าง Embed” เพื่อดูการแสดงผลก่อนบันทึก</div>
 </aside>
 </div>
-<div class="article-editor-panel article-editor-history"><h2>บทความในระบบ</h2><div id="editor-history" class="article-article-history"><p>กำลังโหลดรายการ...</p></div></div>
+<div class="article-editor-panel article-editor-history"><div class="article-editor-heading"><h2>จัดการบทความ</h2><a class="article-button article-button--outline" href="./editor.html">＋ บทความใหม่</a></div>
+<div class="article-editor-overview" aria-label="สรุปสถานะบทความ">
+<div><strong id="editor-total-count">0</strong><span>ทั้งหมด</span></div><div><strong id="editor-draft-count">0</strong><span>ฉบับร่าง</span></div><div><strong id="editor-published-count">0</strong><span>เผยแพร่แล้ว</span></div>
+</div>
+<div class="article-readiness" aria-label="ตรวจความพร้อม Firestore แบบอ่านอย่างเดียว">
+<div class="article-editor-heading">
+<h3>ตรวจความพร้อมข้อมูลบทความ</h3>
+<button class="article-button article-button--outline" type="button" id="editor-check-readiness" aria-controls="editor-readiness-status">ตรวจสอบข้อมูลและ Index</button>
+</div>
+<p class="article-message" id="editor-readiness-status" role="status" aria-live="polite">ยังไม่ได้ตรวจสอบความพร้อมของ Firestore Production</p>
+<small>อ่านเฉพาะจำนวนเอกสารจาก Firestore ไม่แก้ไขข้อมูลหรือสิทธิ์ ตรวจว่าการเรียงวันที่อาจข้ามบทความเก่าหรือไม่ และตรวจ Query สำหรับ Index บทความเผยแพร่</small>
+</div>
+<div class="article-history-filters"><div class="article-field"><label for="editor-history-search">ค้นหาบทความ</label><input type="search" id="editor-history-search" placeholder="ค้นหาชื่อบทความ" autocomplete="off" aria-describedby="editor-history-search-hint"><small id="editor-history-search-hint">การค้นหาหรือกรองสถานะจะตรวจบทความทั้งหมดที่บัญชีผู้ดูแลมีสิทธิ์ อาจใช้เวลามากขึ้นเมื่อมีบทความจำนวนมาก</small></div><div class="article-field"><label for="editor-history-filter">สถานะ</label><select id="editor-history-filter"><option value="all">ทุกสถานะ</option><option value="draft">ฉบับร่าง</option><option value="published">เผยแพร่แล้ว</option></select></div></div>
+<p class="article-message" id="editor-history-count" role="status" aria-live="polite">กำลังโหลดรายการ...</p><div id="editor-history" class="article-article-history"><p>กำลังโหลดรายการ...</p></div><div class="article-pagination"><button class="article-button article-button--outline" type="button" id="editor-history-more" hidden aria-controls="editor-history">แสดงบทความเพิ่มเติม</button></div></div>
 </div>
 </div>
 </section>
 </main>
 <footer class="article-footer"><div class="shell"><span>© <span id="year">2026</span> · thonpin</span><a href="./list.html">บทความทั้งหมด</a></div></footer>
-<script type="module" src="../assets/js/articles-editor.js?v=drive-canonical-hotfix-20261107"></script>
+<script defer src="../assets/js/app.js?v=mobile-ux-20261106"></script>
+<script type="module" src="../assets/js/articles-editor.js?v=firestore-retry-20261106"></script>
 </body>
 </html>
