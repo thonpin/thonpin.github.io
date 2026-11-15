@@ -149,7 +149,6 @@
 })();
 
 
-
 /* Public runtime bundle, generated from private modular sources. */
 
 // Public Firebase web-app configuration. Fill these values from Firebase Console.
@@ -165,7 +164,6 @@ const firebaseConfigured=Boolean(
   firebaseConfig.apiKey&&firebaseConfig.authDomain&&
   firebaseConfig.projectId&&firebaseConfig.appId
 );
-
 
 
 // Pure article helpers shared by public pages and the editor.
@@ -290,7 +288,6 @@ function createEmbed(sourceUrl,title){
   figure.append(caption);
   return figure;
 }
-
 
 
 
@@ -658,4 +655,3 @@ async function boot(){
   }
 }
 boot();
-
