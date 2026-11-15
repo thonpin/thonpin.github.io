@@ -306,6 +306,30 @@ function showMessage(container,heading,message,href,linkText){
   }
   container.replaceChildren(panel);
 }
+
+// Retry read-only requests twice for transient network/service failures.
+async function readWithRetry(read){
+  for(let attempt=0;;attempt++){
+    try{return await read();}
+    catch(error){
+      const code=String(error?.code||'').replace(/^firestore\//,'');
+      if(attempt>=2||!['unknown','unavailable','deadline-exceeded','aborted'].includes(code))throw error;
+      await new Promise(resolve=>setTimeout(resolve,400*2**attempt));
+    }
+  }
+}
+function addRetryButton(container,retry){
+  const button=createNode('button','article-button article-button--outline','ลองอีกครั้ง');
+  button.type='button';
+  button.addEventListener('click',()=>{
+    button.disabled=true;
+    button.textContent='กำลังโหลด...';
+    announce('กำลังโหลดบทความอีกครั้ง');
+    retry();
+  },{once:true});
+  container?.append(button);
+}
+
 function renderList(container,posts,hrefPrefix=""){
   container.replaceChildren();
   if(!posts.length){
@@ -591,7 +615,7 @@ async function boot(){
         showMessage(root,"ไม่พบบทความ","ลิงก์บทความไม่ถูกต้อง","./list.html","กลับไปหน้าบทความ");
         return;
       }
-      const snapshot=await fs.getDoc(fs.doc(db,"articles",id));
+      const snapshot=await readWithRetry(()=>fs.getDoc(fs.doc(db,"articles",id)));
       if(!snapshot.exists()||snapshot.data().status!=="published"){
         showMessage(root,"ไม่พบบทความ","บทความอาจยังไม่เผยแพร่หรือถูกนำออก","./list.html","บทความทั้งหมด");
         return;
@@ -605,20 +629,20 @@ async function boot(){
       // articles once, because Firestore is not a full-text search engine.
       const readAllPublished=async()=>{
         const q=fs.query(fs.collection(db,"articles"),fs.where("status","==","published"));
-        const snapshot=await fs.getDocs(q);
+        const snapshot=await readWithRetry(()=>fs.getDocs(q));
         return sortArticles(snapshot.docs.map(d=>({id:d.id,...d.data()})));
       };
       renderSearchableList([],{
-        fetchPage:cursor=>fetchPublishedPage(fs,db,cursor),
+        fetchPage:cursor=>readWithRetry(()=>fetchPublishedPage(fs,db,cursor)),
         loadAll:readAllPublished
       });
       return;
     }
     if(view==="home"){
-      renderLatest(await fetchLatestPublished(fs,db));
+      renderLatest(await readWithRetry(()=>fetchLatestPublished(fs,db)));
     }else if(view==="catalog"){
       const q=fs.query(fs.collection(db,"articles"),fs.where("status","==","published"));
-      const snapshot=await fs.getDocs(q);
+      const snapshot=await readWithRetry(()=>fs.getDocs(q));
       renderCatalog(sortArticles(snapshot.docs.map(d=>({id:d.id,...d.data()}))));
     }
   }catch(error){
@@ -626,6 +650,7 @@ async function boot(){
     console.error("Article catalog load:",error?.code||"unknown");
     const path=view==="home"?"articles/list.html":"./list.html";
     showMessage(root,"โหลดบทความไม่สำเร็จ",articleLoadErrorMessage(error),path,"รายการบทความ");
+    addRetryButton(root,()=>location.reload());
     announce("ไม่สามารถโหลดบทความได้");
   }
 }
